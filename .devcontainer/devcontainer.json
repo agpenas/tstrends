@@ -1,0 +1,32 @@
+{
+    "name": "devcontainer_trend_labeller",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "..",
+        "args": {
+            "REMOTE_USER": "${localEnv:USER}",
+            "REMOTE_UID": "${localEnv:REMOTE_UID:1000}",
+            "REMOTE_GID": "${localEnv:REMOTE_GID:1000}"
+        }
+    },
+    "remoteUser": "${localEnv:USER}",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode-remote.remote-containers",
+                "ms-python.python",
+                "ms-python.black",
+                "ms-python.black-formatter",
+                "ms-python.vscode-pylance",
+                "eamodio.gitlens"
+            ]
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+        "source=${localEnv:HOME}/.ssh/id_ed25519,target=/home/vscode/.ssh/id_ed25519,type=bind,consistency=cached"
+    ]
+}
