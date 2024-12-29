@@ -2,7 +2,7 @@ from typing import List
 from matplotlib import pyplot as plt
 
 
-def plot_trend_labels_matplotly(self, time_series_list: List[str], labels: List[int]) -> None:
+def plot_trend_labels_matplotly(time_series_list: List[str], labels: List[int]) -> None:
     """
     Visualize the price series with trend labels.
 
@@ -15,7 +15,7 @@ def plot_trend_labels_matplotly(self, time_series_list: List[str], labels: List[
     plt.plot(time_series_list, label="Price", color="blue", linewidth=2)
 
     # Highlight trends
-    for t in range(len(time_series_list)-1):
+    for t in range(len(time_series_list) - 1):
         if labels[t] == 1:  # Uptrend
             plt.axvspan(
                 t,

@@ -96,7 +96,7 @@ class OracleBinaryTrendLabeler:
 
         return labels
 
-    def label_trends(self, time_series_list: List[float]) -> List[int]:
+    def get_labels(self, time_series_list: List[float]) -> List[int]:
         """
         Run the full Oracle Trend Labeling Algorithm over a time series.
         Args:
@@ -113,4 +113,3 @@ class OracleBinaryTrendLabeler:
         labels = self._backward_pass(S, P, time_series_arr)
 
         return labels.tolist()
-
