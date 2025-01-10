@@ -23,10 +23,64 @@ class TernaryCTL:
 
         self.marginal_change_thres = marginal_change_thres
         self.window_size = window_size
+        self.labels: List[int] = []
+
+    def _find_upward_trend(self, time_series_list: List[float]) -> None:
+        """
+        Find upward trends in a time series of closing prices. This is the first step of the ternary trend labelling algorithm.
+
+        Args:
+            time_series_list (List[float]): List of closing prices.
+        """
+        self.labels = [0]
+        for previous_price, current_price in zip(
+            time_series_list[:-1], time_series_list[1:]
+        ):
+            if self._is_significant_upward_move(current_price, previous_price):
+                self.labels.append(1)
+            else:
+                self.labels.append(0)
+
+    def _is_significant_upward_move(self, current: float, reference: float) -> bool:
+        """
+        Check if a current price is a significant upward move compared to a reference price.
+
+        Args:
+            current (float): The current price.
+            reference (float): The reference price.
+
+        Returns:
+            bool: True if the current price is a significant upward move, False otherwise.
+        """
+        return current >= reference + self.marginal_change_thres * reference
+
+    def _is_significant_downward_move(self, current: float, reference: float) -> bool:
+        """
+        Check if a current price is a significant downward move compared to a reference price.
+
+        Args:
+            current (float): The current price.
+            reference (float): The reference price.
+
+        Returns:
+            bool: True if the current price is a significant downward move, False otherwise.
+        """
+        return current <= reference - self.marginal_change_thres * reference
+
+    def _update_labels(self, start: int, end: int, new_label: int) -> None:
+        """
+        Update the labels in a range of the labels list.
+
+        Args:
+            start (int): The start index.
+            end (int): The end index.
+            new_label (int): The new label to assign to the range.
+        """
+        self.labels[start:end] = [new_label] * (end - start)
 
     def get_labels(
         self,
-        time_series_list: List[float],
+        prices: List[float],
     ) -> List[int]:
         """
         Labels trends in a time series of closing prices using a ternary classification approach.
@@ -44,75 +98,59 @@ class TernaryCTL:
         to avoid getting stuck in prolonged sideways movements.
 
         Parameters:
-            time_series_list (List[float]): List of closing prices.
+            prices (List[float]): List of closing prices.
 
         Returns:
             List[int]: List of labels where 1 indicates an upward trend,
                     -1 indicates a downward trend, and 0 indicates no-action.
         """
-        ts_len = len(time_series_list)
-        labels = [0] * ts_len  # Initialize all labels as 0 (no-action)
 
-        i = 0
-        current_state = 0  # 0: no-action, 1: upward, -1: downward
+        # Initialize labels with upward trend detection
+        self._find_upward_trend(prices)
+        trend_start = 0
 
-        while i < ts_len - 1:
+        for current_idx, current_price in enumerate(prices[1:], start=1):
+            reference_price = prices[trend_start]
+            window_exceeded = current_idx - trend_start > self.window_size
 
-            j = i + 1
+            match self.labels[current_idx]:
+                case 1:  # Upward trend
+                    if current_price > reference_price:
+                        self._update_labels(trend_start, current_idx, 1)
+                    elif self._is_significant_downward_move(
+                        current_price, reference_price
+                    ):
+                        self._update_labels(trend_start, current_idx, -1)
+                    elif window_exceeded:
+                        self._update_labels(trend_start, current_idx, 0)
+                    else:
+                        continue
+                    trend_start = current_idx
 
-            if current_state == 0:  # No-action state
+                case -1:  # Downward trend
+                    if current_price < reference_price:
+                        self._update_labels(trend_start, current_idx, -1)
+                    elif self._is_significant_upward_move(
+                        current_price, reference_price
+                    ):
+                        self._update_labels(trend_start, current_idx, 1)
+                    elif window_exceeded:
+                        self._update_labels(trend_start, current_idx, 0)
+                    else:
+                        continue
+                    trend_start = current_idx
 
-                if (
-                    time_series_list[j]
-                    >= time_series_list[i]
-                    + self.marginal_change_thres * time_series_list[i]
-                ):
-                    current_state = 1
+                case 0:  # No trend
+                    if self._is_significant_upward_move(current_price, reference_price):
+                        self._update_labels(trend_start, current_idx, 1)
+                    elif self._is_significant_downward_move(
+                        current_price, reference_price
+                    ):
+                        self._update_labels(trend_start, current_idx, -1)
+                    elif window_exceeded:
+                        self._update_labels(trend_start, current_idx, 0)
+                    else:
+                        continue
+                    trend_start = current_idx
 
-                elif (
-                    time_series_list[j]
-                    <= time_series_list[i]
-                    - self.marginal_change_thres * time_series_list[i]
-                ):
-                    current_state = -1
-
-                elif j - i > self.window_size:
-                    i += 1
-                    continue
-
-            elif current_state == 1:  # Upward trend
-
-                while j < ts_len and time_series_list[j] > time_series_list[i]:
-                    labels[j] = 1
-                    j += 1
-
-                if (
-                    j < ts_len
-                    and time_series_list[i] - time_series_list[j]
-                    >= self.marginal_change_thres * time_series_list[i]
-                ):
-                    current_state = -1
-
-                elif j < ts_len and j - i > self.window_size:
-                    current_state = 0
-
-            elif current_state == -1:  # Downward trend
-
-                while j < ts_len and time_series_list[j] < time_series_list[i]:
-                    labels[j] = -1
-                    j += 1
-
-                if (
-                    j < ts_len
-                    and time_series_list[j]
-                    >= time_series_list[i]
-                    + self.marginal_change_thres * time_series_list[i]
-                ):
-                    current_state = 1
-
-                elif j < ts_len and j - i > self.window_size:
-                    current_state = 0
-
-            i = j
-
-        return labels
+        return self.labels
