@@ -1,7 +1,8 @@
 from typing import List
+from .base_labeller import BaseLabeller
 
 
-class BinaryCTL:
+class BinaryCTL(BaseLabeller):
     """Continuous Trend Labeller class, adapted to Python from the original paper by Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends". https://doi.org/10.3390/e22101162"""
 
     def __init__(self, omega: float) -> None:
@@ -25,6 +26,8 @@ class BinaryCTL:
         Returns:
         List[int]: The label vector Y = [label1, label2, ..., labelN]. Possible values for labels are 1 (uptrend), 0 (no trend), and -1 (downtrend).
         """
+        self._verify_time_series(time_series_list)
+
         ts_len = len(time_series_list)
         labels = [0] * ts_len  # Initialize the label vector
 

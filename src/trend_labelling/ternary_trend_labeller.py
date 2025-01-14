@@ -1,10 +1,11 @@
 from typing import List
+from .base_labeller import BaseLabeller
 
 
-class TernaryCTL:
+class TernaryCTL(BaseLabeller):
     """
     Three-states continuous trend labeller class, adapted from the original paper by
-    Dezhkam, Arsalan et al. “A Bayesian-based classification framework for financial time series trend prediction.”
+    Dezhkam, Arsalan et al. "A Bayesian-based classification framework for financial time series trend prediction."
     https://doi.org/10.1007/s11227-022-04834-4
     """
 
@@ -104,6 +105,7 @@ class TernaryCTL:
             List[int]: List of labels where 1 indicates an upward trend,
                     -1 indicates a downward trend, and 0 indicates no-action.
         """
+        self._verify_time_series(prices)
 
         # Initialize labels with upward trend detection
         self._find_upward_trend(prices)

@@ -2,9 +2,10 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
+from .base_labeller import BaseLabeller
 
 
-class OracleBinaryTrendLabeler:
+class OracleBinaryTrendLabeler(BaseLabeller):
     """
     Oracle Binary Trend Labeler class, adapted to Python from the original paper by T. Kovačević, A. Merćep, S. Begušić and Z. Kostanjčar, "Optimal Trend Labeling in Financial Time Series,", doi: 10.1109/ACCESS.2023.3303283.
 
@@ -109,7 +110,7 @@ class OracleBinaryTrendLabeler:
         time_series_arr = np.array(time_series_list)
 
         P = self._compute_transition_costs(time_series_arr)
-        S = self._forward_pass(P, time_series_arr)
+        S = self._forward_pass(time_series_list, P)
         labels = self._backward_pass(S, P, time_series_arr)
 
         return labels.tolist()
