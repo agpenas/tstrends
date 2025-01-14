@@ -8,32 +8,23 @@ class BaseReturnEstimator(ABC):
     Base class for return estimators.
     """
 
-    def __init__(self, prices: List[float], labels: List[int]):
-        self._verify_input_data(prices, labels)
+    def __init__(self, prices: List[float]):
+        self._verify_input_data(prices)
         self.prices = prices
-        self.labels = labels
 
-    def _verify_input_data(self):
+    def _verify_input_data(self, prices: List[float]):
         """Verify that the input data is valid.
 
         Raises:
-            ValueError: If any specification of labels or prices is not valid
+            ValueError: If any specification of prices is not valid
         """
-        if not isinstance(self.prices, list):
+        if not isinstance(prices, list):
             raise ValueError("Prices must be a list")
-        if not isinstance(self.labels, list):
-            raise ValueError("Labels must be a list")
-        if not all(isinstance(price, float) for price in self.prices):
+        if not all(isinstance(price, float) for price in prices):
             raise ValueError("Prices must be a list of floats")
-        if not all(isinstance(label, int) for label in self.labels):
-            raise ValueError("Labels must be a list of integers")
-        if len(self.prices) != len(self.labels):
-            raise ValueError("Prices and labels must have the same length")
-        if not all(label in [-1, 0, 1] for label in self.labels):
-            raise ValueError("Labels must be -1, 0, or 1")
 
     @abstractmethod
-    def estimate_return(self) -> float:
+    def estimate_return(self, labels: List[int]) -> float:
         pass
 
 
@@ -47,13 +38,12 @@ class SimpleReturnEstimator(BaseReturnEstimator):
 
     Attributes:
         prices (List[float]): A list of historical prices
-        labels (List[int]): A list of position labels (-1, 0, or 1)
 
     Example:
         >>> prices = [100.0, 101.0, 99.0]
         >>> labels = [1, 1, -1]
-        >>> estimator = SimpleReturnEstimator(prices, labels)
-        >>> return_value = estimator.estimate_return()
+        >>> estimator = SimpleReturnEstimator(prices)
+        >>> return_value = estimator.estimate_return(labels)
         >>> print(return_value)
         2.0
 
@@ -61,26 +51,45 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         (101.0 - 100.0) * 1 + (99.0 - 101.0) * -1 = 2.0
     """
 
-    def _calculate_return(self) -> float:
+    def _verify_labels(self, labels: List[int]):
+        """Verify that the labels are valid.
+
+        Raises:
+            ValueError: If any specification of labels is not valid
+        """
+        if not isinstance(labels, list):
+            raise ValueError("Labels must be a list")
+        if not all(isinstance(label, int) for label in labels):
+            raise ValueError("Labels must be a list of integers")
+        if len(self.prices) != len(labels):
+            raise ValueError("Prices and labels must have the same length")
+        if not all(label in [-1, 0, 1] for label in labels):
+            raise ValueError("Labels must be -1, 0, or 1")
+
+    def _calculate_return(self, labels: List[int]) -> float:
         """Calculate the return based on price differences and labels.
 
         Returns:
             float: The calculated return
         """
         return_value = [
-            (self.prices[i] - self.prices[i - 1]) * self.labels[i]
+            (self.prices[i] - self.prices[i - 1]) * labels[i]
             for i in range(1, len(self.prices))
         ]
         return sum(return_value)
 
-    def estimate_return(self) -> float:
+    def estimate_return(self, labels: List[int]) -> float:
         """
         Estimate the return based on price differences and labels.
+
+        Args:
+            labels (List[int]): A list of position labels (-1, 0, or 1)
 
         Returns:
             float: The estimated return
         """
-        return self._calculate_return()
+        self._verify_labels(labels)
+        return self._calculate_return(labels)
 
 
 class ReturnsEstimatorWithFees(SimpleReturnEstimator):
@@ -90,7 +99,8 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
     This class extends the SimpleReturnEstimator by adding various types of fees that impact
     the overall return calculation. The goal of these fees is twofold:
     1. To account for the cost of entering and exiting positions in real life, as well as maintaining positions
-    2. Act as a form of regularization to prevent overfitting the prices fluctuations, either by identifying ultrashort term trends or overextending trends over neutral periods.
+    2. Act as a form of regularization to prevent overfitting the prices fluctuations,
+    either by identifying ultrashort term trends or overextending trends over neutral periods.
 
     Transaction Fees:
     - Long Position (lp) Transaction Fees: Applied when introducing a positive (upward trend) label
@@ -104,7 +114,6 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
 
     Attributes:
         prices (List[float]): A list of historical prices
-        labels (List[int]): A list of position labels (-1 for short, 0 for no position, 1 for long)
         lp_transaction_fees (float): Transaction fee percentage for long positions
         sp_transaction_fees (float): Transaction fee percentage for short positions
         lp_holding_fees (float): Daily holding fee percentage for long positions
@@ -119,13 +128,12 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
     def __init__(
         self,
         prices: List[float],
-        labels: List[int],
         lp_transaction_fees: float = 0,
         sp_transaction_fees: float = 0,
         lp_holding_fees: float = 0,
         sp_holding_fees: float = 0,
     ):
-        super().__init__(prices, labels)
+        super().__init__(prices)
         self._verify_input_fees(
             lp_transaction_fees, sp_transaction_fees, lp_holding_fees, sp_holding_fees
         )
@@ -160,17 +168,17 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
                 f"Fees must be non-negative. Received {lp_transaction_fees}, {sp_transaction_fees}, {lp_holding_fees}, {sp_holding_fees}"
             )
 
-    def _estimate_holding_fees(self) -> float:
+    def _estimate_holding_fees(self, labels: List[int]) -> float:
         """
         Estimate the holding fees based on the labels and prices.
         """
-        label_counter = Counter(self.labels)
+        label_counter = Counter(labels)
         return (
             label_counter[1] * self.lp_transaction_fees
             + label_counter[-1] * self.sp_transaction_fees
         )
 
-    def _estimate_transaction_fees(self) -> float:
+    def _estimate_transaction_fees(self, labels: List[int]) -> float:
         """
         Estimate the transaction fees based on the labels and prices. A transaction fee is applied when a given label is preceded by a different label.
         """
@@ -181,21 +189,27 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             total_fees += (
                 sum(
                     self.prices[i - 1]
-                    for i in range(1, len(self.labels))
-                    if self.labels[i] == label_value
-                    and self.labels[i - 1] != label_value
+                    for i in range(1, len(labels))
+                    if labels[i] == label_value and labels[i - 1] != label_value
                 )
-                + int(self.labels[0] == label_value)
+                + int(labels[0] == label_value)
             ) * fee
         return total_fees
 
-    def estimate_return(self) -> float:
+    def estimate_return(self, labels: List[int]) -> float:
         """
         Estimate the return based on price differences and labels, and include fees cost if it is not zero.
+
+        Args:
+            labels (List[int]): A list of position labels (-1, 0, or 1)
+
+        Returns:
+            float: The estimated return
         """
+        self._verify_labels(labels)
         fees = 0
         if self.lp_transaction_fees != 0 or self.sp_transaction_fees != 0:
-            fees += self._estimate_transaction_fees()
+            fees += self._estimate_transaction_fees(labels)
         if self.lp_holding_fees != 0 or self.sp_holding_fees != 0:
-            fees += self._estimate_holding_fees()
-        return self._calculate_return() - fees
+            fees += self._estimate_holding_fees(labels)
+        return self._calculate_return(labels) - fees
