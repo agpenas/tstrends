@@ -24,14 +24,14 @@ class TernaryCTL(BaseLabeller):
 
         self.marginal_change_thres = marginal_change_thres
         self.window_size = window_size
-        self.labels: List[int] = []
+        self.labels: list[int] = []
 
-    def _find_upward_trend(self, time_series_list: List[float]) -> None:
+    def _find_upward_trend(self, time_series_list: list[float]) -> None:
         """
         Find upward trends in a time series of closing prices. This is the first step of the ternary trend labelling algorithm.
 
         Args:
-            time_series_list (List[float]): List of closing prices.
+            time_series_list (list[float]): List of closing prices.
         """
         self.labels = [0]
         for previous_price, current_price in zip(
@@ -81,8 +81,8 @@ class TernaryCTL(BaseLabeller):
 
     def get_labels(
         self,
-        prices: List[float],
-    ) -> List[int]:
+        prices: list[float],
+    ) -> list[int]:
         """
         Labels trends in a time series of closing prices using a ternary classification approach.
         The method identifies three distinct states in price movements:
@@ -99,10 +99,10 @@ class TernaryCTL(BaseLabeller):
         to avoid getting stuck in prolonged sideways movements.
 
         Parameters:
-            prices (List[float]): List of closing prices.
+            prices (list[float]): List of closing prices.
 
         Returns:
-            List[int]: List of labels where 1 indicates an upward trend,
+            list[int]: List of labels where 1 indicates an upward trend,
                     -1 indicates a downward trend, and 0 indicates no-action.
         """
         self._verify_time_series(prices)

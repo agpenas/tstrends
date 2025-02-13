@@ -16,15 +16,15 @@ class BinaryCTL(BaseLabeller):
             raise TypeError("omega must be a float.")
         self.omega = omega
 
-    def get_labels(self, time_series_list: List[float]) -> List[int]:
+    def get_labels(self, time_series_list: list[float]) -> list[int]:
         """
         Auto-labels a price time series based on the provided algorithm.
 
         Parameters:
-        time_series_list (List[float]): The original time series data X = [x1, x2, ..., xN]
+        time_series_list (list[float]): The original time series data X = [x1, x2, ..., xN]
 
         Returns:
-        List[int]: The label vector Y = [label1, label2, ..., labelN]. Possible values for labels are 1 (uptrend), 0 (no trend), and -1 (downtrend).
+        list[int]: The label vector Y = [label1, label2, ..., labelN]. Possible values for labels are 1 (uptrend), 0 (no trend), and -1 (downtrend).
         """
         self._verify_time_series(time_series_list)
 
@@ -48,6 +48,8 @@ class BinaryCTL(BaseLabeller):
                     i,
                     1,
                 )
+                for j in range(i):
+                    labels[j] = 1
                 break
 
             elif price < first_price * (1 - self.omega):
@@ -57,6 +59,8 @@ class BinaryCTL(BaseLabeller):
                     i,
                     -1,
                 )
+                for j in range(i):
+                    labels[j] = -1
                 break
 
         # Second loop to label the rest of the time series
@@ -95,5 +99,7 @@ class BinaryCTL(BaseLabeller):
                         i,
                         1,
                     )
-
+        # Label the last interval
+        for j in range(min(curr_low_time, curr_high_time) + 1, ts_len):
+            labels[j] = current_direction
         return labels

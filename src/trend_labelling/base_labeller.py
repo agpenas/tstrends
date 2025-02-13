@@ -10,12 +10,12 @@ class BaseLabeller(ABC):
     The class provides common input validation functionality.
     """
 
-    def _verify_time_series(self, time_series_list: List[float]) -> None:
+    def _verify_time_series(self, time_series_list: list[float]) -> None:
         """
         Verify that the input time series is valid.
 
         Args:
-            time_series_list (List[float]): The price series to verify.
+            time_series_list (list[float]): The price series to verify.
 
         Raises:
             TypeError: If time_series_list is not a list or contains non-numeric values.
@@ -31,14 +31,14 @@ class BaseLabeller(ABC):
             raise ValueError("time_series_list must contain at least two elements.")
 
     @abstractmethod
-    def get_labels(self, time_series_list: List[float]) -> List[int]:
+    def get_labels(self, time_series_list: list[float]) -> list[int]:
         """
         Label trends in a time series of prices.
 
         Args:
-            time_series_list (List[float]): List of prices to label.
+            time_series_list (list[float]): List of prices to label.
 
         Returns:
-            List[int]: List of trend labels.
+            list[int]: List of trend labels.
         """
         pass

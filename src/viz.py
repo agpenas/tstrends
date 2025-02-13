@@ -1,40 +1,45 @@
-from typing import List
 from matplotlib import pyplot as plt
 
 
-def plot_trend_labels_matplotly(time_series_list: List[str], labels: List[int]) -> None:
+def plot_trend_labels(
+    time_series_list: list[str], labels: list[int], title: str = None
+) -> None:
     """
     Visualize the price series with trend labels.
 
     Args:
-        time_series_list (List[str]): The price series.
-        labels (List[int]): Optimal trend labels (0 for downtrend, 1 for uptrend).
+        time_series_list (list[str]): The price series.
+        labels (list[int]): Optimal trend labels (0 for downtrend, 1 for uptrend).
+        title (str, optional): The title of the plot. Defaults to None.
     """
 
     plt.figure(figsize=(10, 6))
-    plt.plot(time_series_list, label="Price", color="blue", linewidth=2)
+    plt.plot(time_series_list, label="Price", color="black", linewidth=2)
+
+    # Create empty plots for legend entries
+    plt.fill_between([], [], color="darkgreen", label="Uptrend")
+    plt.fill_between([], [], color="brown", label="Downtrend")
 
     # Highlight trends
-    for t in range(len(time_series_list) - 1):
+    for t in range(len(time_series_list)):
         if labels[t] == 1:  # Uptrend
             plt.axvspan(
                 t,
                 t + 1,
-                color="green",
-                alpha=0.3,
-                label="Uptrend" if t == 0 else "",
+                color="darkgreen",
+                alpha=1,
             )
-        elif labels[t] == 0:  # Downtrend
+        elif labels[t] == -1:  # Downtrend
             plt.axvspan(
                 t,
                 t + 1,
-                color="red",
-                alpha=0.3,
-                label="Downtrend" if t == 0 else "",
+                color="brown",
+                alpha=1,
             )
 
     plt.xlabel("Time")
-    plt.title("Trend Labeling Visualization")
+    if title:
+        plt.title(title)
     plt.legend(loc="best")
     plt.grid(True)
     plt.show()
