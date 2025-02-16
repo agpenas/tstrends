@@ -3,9 +3,9 @@ from bayes_opt import BayesianOptimization
 from bayes_opt import acquisition
 
 
-from src.optimisation.optimisation_bounds import OptimisationBounds
-from src.returns_estimation.returns_estimation import BaseReturnEstimator
-from src.trend_labelling import BaseLabeller
+from .optimisation_bounds import OptimisationBounds
+from returns_estimation.returns_estimation import BaseReturnEstimator
+from trend_labelling import BaseLabeller
 
 # Constants for parameter types
 INTEGER_PARAMS = ["window_size"]

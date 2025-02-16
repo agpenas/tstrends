@@ -161,11 +161,11 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
         ):
             total_fees += (
                 sum(
-                    prices[i - 1]
+                    prices[i]
                     for i in range(1, len(labels))
                     if labels[i] == label_value and labels[i - 1] != label_value
                 )
-                + int(labels[0] == label_value)
+                + int(labels[0] == label_value) * prices[0]
             ) * fee
         return total_fees
 
@@ -188,9 +188,11 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             or self.fees_config.sp_transaction_fees != 0
         ):
             fees += self._estimate_transaction_fees(prices, labels)
+            print(fees)
         if (
             self.fees_config.lp_holding_fees != 0
             or self.fees_config.sp_holding_fees != 0
         ):
             fees += self._estimate_holding_fees(prices, labels)
+            print(fees)
         return self._calculate_return(prices, labels) - fees

@@ -1,5 +1,5 @@
 from typing import Type
-from src.trend_labelling import (
+from trend_labelling import (
     BaseLabeller,
     BinaryCTL,
     TernaryCTL,

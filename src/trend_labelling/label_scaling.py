@@ -1,44 +1,55 @@
-from abc import ABC, abstractmethod
+"""Label scaling utilities for trend labelling."""
+
+from enum import IntEnum
 import numpy as np
 from numpy.typing import NDArray
 
 
-class LabelScaler(ABC):
-    """Abstract base class for label scaling strategies"""
+class Labels(IntEnum):
+    """Standard label values for trend classification."""
 
-    @abstractmethod
-    def scale(self, labels: NDArray) -> NDArray:
-        """Scale labels to a specific range
-
-        Args:
-            labels (NDArray): Input labels to scale
-
-        Returns:
-            NDArray: Scaled labels
-        """
-        raise NotImplementedError("Subclasses must implement this method")
+    DOWN = -1
+    NEUTRAL = 0
+    UP = 1
 
 
-class DefaultLabelScaler(LabelScaler):
-    """Scales labels to range [-1, 1]"""
+# Explicit mappings from input labels to standardized values
+BINARY_MAP = {0: Labels.DOWN, 1: Labels.UP}
 
-    range_width = 2
-    offset = 1
+TERNARY_MAP = {0: Labels.DOWN, 1: Labels.NEUTRAL, 2: Labels.UP}
 
-    def scale(self, labels: NDArray) -> NDArray:
-        """Scale labels to range [-1, 1]
 
-        Args:
-            labels (NDArray): Input labels to scale
+def scale_binary(labels: NDArray) -> NDArray:
+    """Scale binary labels from {0,1} to {-1,1}.
 
-        Returns:
-            NDArray: Labels scaled to [-1, 1] range
+    Args:
+        labels (NDArray): Input labels (must contain only 0s and 1s)
 
-        Raises:
-            ValueError: If labels array contains all zeros
-        """
+    Returns:
+        NDArray: Scaled labels in {-1,1}
+    """
+    return np.vectorize(BINARY_MAP.get)(labels)
 
-        if np.count_nonzero(labels) < 1:
-            return labels
-        max_val = np.abs(labels).max()
-        return (labels / max_val) * self.range_width - self.offset
+
+def scale_ternary(labels: NDArray) -> NDArray:
+    """Scale ternary labels from {0,1,2} to {-1,0,1}.
+
+    Args:
+        labels (NDArray): Input labels (must contain only 0s, 1s, and 2s)
+
+    Returns:
+        NDArray: Scaled labels in {-1,0,1}
+    """
+    return np.vectorize(TERNARY_MAP.get)(labels)
+
+
+def extract_label_values(labels: list[Labels]) -> list[int]:
+    """Convert a list of Labels enum to their integer values.
+
+    Args:
+        labels (list[Labels]): List of Labels enum values.
+
+    Returns:
+        list[int]: List of integer values corresponding to the Labels enum values.
+    """
+    return [label.value for label in labels]

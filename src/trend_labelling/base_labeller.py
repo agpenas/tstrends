@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List
+import math
+from typing import List, Union, TypeVar
+from .label_scaling import Labels
+
+T = TypeVar("T", list[int], list[Labels])
 
 
 class BaseLabeller(ABC):
@@ -27,18 +31,25 @@ class BaseLabeller(ABC):
             raise TypeError(
                 "All elements in time_series_list must be integers or floats."
             )
+        if any(math.isnan(price) for price in time_series_list):
+            raise TypeError("time_series_list cannot contain NaN values.")
+
         if len(time_series_list) < 2:
             raise ValueError("time_series_list must contain at least two elements.")
 
     @abstractmethod
-    def get_labels(self, time_series_list: list[float]) -> list[int]:
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: bool = True
+    ) -> T:
         """
         Label trends in a time series of prices.
 
         Args:
             time_series_list (list[float]): List of prices to label.
+            return_labels_as_int (bool, optional): If True, returns integer labels (-1, 0, 1),
+                                                  if False returns Labels enum values. Defaults to True.
 
         Returns:
-            list[int]: List of trend labels.
+            Union[list[int], list[Labels]]: List of trend labels, either as integers or Labels enum values.
         """
         pass

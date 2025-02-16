@@ -1,8 +1,8 @@
-from typing import List
+from typing import Callable, List, Union
 import numpy as np
 from numpy.typing import NDArray
 from .base_labeller import BaseLabeller
-from .label_scaling import LabelScaler, DefaultLabelScaler
+from .label_scaling import Labels, scale_binary, scale_ternary
 
 
 class BaseOracleTrendLabeler(BaseLabeller):
@@ -10,20 +10,22 @@ class BaseOracleTrendLabeler(BaseLabeller):
     Base class for Oracle Trend Labelers.
     """
 
-    def __init__(
-        self, transaction_cost: float, label_scaler: LabelScaler = DefaultLabelScaler()
-    ) -> None:
+    def __init__(self, transaction_cost: float) -> None:
         """
         Initialize the base Oracle Trend Labeler.
 
         Args:
             transaction_cost (float): Cost of making a transaction
-            label_scaler (LabelScaler, optional): Strategy for scaling labels. Defaults to DefaultLabelScaler().
         """
         if not isinstance(transaction_cost, float):
             raise TypeError("transaction_cost must be a float.")
         self.transaction_cost = transaction_cost
-        self.label_scaler = label_scaler
+
+    def _scale_labels(self, labels: NDArray) -> NDArray:
+        """
+        Scale the labels.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")
 
     def _verify_time_series(self, time_series_list: list[float]) -> None:
         """
@@ -61,7 +63,7 @@ class BaseOracleTrendLabeler(BaseLabeller):
             S (NDArray): State matrix of cumulative returns.
             P (NDArray): Transition cost matrix.
         Returns:
-            labels (NDArray): Optimal trend labels (0 for downtrend, 1 for uptrend).
+            labels (NDArray): Optimal trend labels.
         """
         T = len(time_series_arr)
         labels = np.zeros(T, dtype=int)
@@ -72,15 +74,20 @@ class BaseOracleTrendLabeler(BaseLabeller):
 
         return labels
 
-    def get_labels(self, time_series_list: list[float]) -> list[int]:
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: bool = True
+    ) -> Union[list[int], list[Labels]]:
         """
         Run the full Oracle Trend Labeling Algorithm over a time series.
 
         Args:
             time_series_list (list[float]): The price series.
+            return_labels_as_int (bool, optional): If True, returns integer labels (-1, 0, 1),
+                                                  if False returns Labels enum values. Defaults to True.
 
         Returns:
-            list[int]: Optimal trend labels (scaled to range [-1, 1])
+            Union[list[int], list[Labels]]: Optimal trend labels. If return_labels_as_int is True, returns scaled integers,
+                                          otherwise returns Labels enum values.
         """
         self._verify_time_series(time_series_list)
         time_series_arr = np.array(time_series_list)
@@ -89,8 +96,12 @@ class BaseOracleTrendLabeler(BaseLabeller):
         S = self._forward_pass(time_series_list, P)
         labels = self._backward_pass(S, P, time_series_arr)
 
-        scaled_labels = self.label_scaler.scale(labels)
-        return scaled_labels.tolist()
+        scaled_labels = self._scale_labels(labels)
+        return (
+            scaled_labels.tolist()
+            if return_labels_as_int
+            else [Labels(x) for x in scaled_labels]
+        )
 
 
 class OracleBinaryTrendLabeler(BaseOracleTrendLabeler):
@@ -103,6 +114,12 @@ class OracleBinaryTrendLabeler(BaseOracleTrendLabeler):
         Initialize the binary trend labeler.
         """
         super().__init__(transaction_cost)
+
+    def _scale_labels(self, labels: NDArray) -> NDArray:
+        """
+        Scale the labels.
+        """
+        return scale_binary(labels)
 
     def _compute_transition_costs(self, time_series_list: NDArray):
         """
@@ -167,6 +184,12 @@ class OracleTernaryTrendLabeler(BaseOracleTrendLabeler):
             raise TypeError("trend_coeff must be a float.")
         self.trend_coeff = trend_coeff
 
+    def _scale_labels(self, labels: NDArray) -> NDArray:
+        """
+        Scale the labels.
+        """
+        return scale_ternary(labels)
+
     def _compute_transition_costs(self, time_series_arr: NDArray) -> NDArray:
         """
         Initialize the transition cost matrix for three states.
@@ -185,17 +208,17 @@ class OracleTernaryTrendLabeler(BaseOracleTrendLabeler):
             price_change = time_series_arr[t + 1] - time_series_arr[t]
             switch_cost = -time_series_arr[t] * self.transaction_cost
 
-            # Costs for staying in same state
-            P[t, 0, 0] = (
-                -price_change * self.trend_coeff
-            )  # Cost for staying in downtrend
-            P[t, 1, 1] = 0  # No cost for staying neutral
-            P[t, 2, 2] = price_change * self.trend_coeff  # Cost for staying in uptrend
+            # Rewards for staying in same state
+            P[t, 0, 0] = -price_change  # Reward for staying in downtrend
+            P[t, 1, 1] = (
+                abs(price_change) * self.trend_coeff
+            )  # No reward for staying neutral
+            P[t, 2, 2] = price_change  # Reward for staying in uptrend
 
-            # Costs for allowed transitions
+            # Rewards for allowed transitions
             P[t, 0, 1] = switch_cost  # Downtrend to neutral
-            P[t, 1, 0] = 0  # Neutral to downtrend
-            P[t, 1, 2] = 0  # Neutral to uptrend
+            P[t, 1, 0] = switch_cost  # Neutral to downtrend
+            P[t, 1, 2] = switch_cost  # Neutral to uptrend
             P[t, 2, 1] = switch_cost  # Uptrend to neutral
 
         return P

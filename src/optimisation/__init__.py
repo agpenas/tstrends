@@ -1,5 +1,5 @@
-from src.optimisation.optimisation_bounds import OptimisationBounds
-from src.optimisation.optimiser import Optimiser
+from .optimisation_bounds import OptimisationBounds
+from .optimiser import Optimiser
 
 __all__ = [
     "OptimisationBounds",

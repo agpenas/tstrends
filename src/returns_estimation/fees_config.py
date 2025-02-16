@@ -30,9 +30,15 @@ class FeesConfig:
     sp_holding_fees: float = 0.0
 
     def __post_init__(self):
-        """Validate the fees configuration."""
+        """Validate the fees configuration and convert integers to floats."""
+        # First validate types
         for field, value in self.__dict__.items():
             if not isinstance(value, (float, int)):
                 raise ValueError(f"{field} must be float or int, got {type(value)}")
             if value < 0:
                 raise ValueError(f"{field} must be non-negative, got {value}")
+
+        # Then convert to float if needed
+        for field, value in self.__dict__.items():
+            if isinstance(value, int):
+                object.__setattr__(self, field, float(value))

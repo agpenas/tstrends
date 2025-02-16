@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Union
 from .base_labeller import BaseLabeller
+from .label_scaling import Labels, extract_label_values
 
 
 class TernaryCTL(BaseLabeller):
@@ -24,23 +25,18 @@ class TernaryCTL(BaseLabeller):
 
         self.marginal_change_thres = marginal_change_thres
         self.window_size = window_size
-        self.labels: list[int] = []
+        self.labels: list[Labels] = list()
 
-    def _find_upward_trend(self, time_series_list: list[float]) -> None:
+    def _get_first_label(self, time_series_list: list[float]) -> None:
         """
         Find upward trends in a time series of closing prices. This is the first step of the ternary trend labelling algorithm.
 
         Args:
             time_series_list (list[float]): List of closing prices.
         """
-        self.labels = [0]
-        for previous_price, current_price in zip(
-            time_series_list[:-1], time_series_list[1:]
-        ):
-            if self._is_significant_upward_move(current_price, previous_price):
-                self.labels.append(1)
-            else:
-                self.labels.append(0)
+        if time_series_list[0] > time_series_list[1]:
+            return [Labels.DOWN]
+        return [Labels.UP]
 
     def _is_significant_upward_move(self, current: float, reference: float) -> bool:
         """
@@ -53,7 +49,7 @@ class TernaryCTL(BaseLabeller):
         Returns:
             bool: True if the current price is a significant upward move, False otherwise.
         """
-        return current >= reference + self.marginal_change_thres * reference
+        return current >= reference * (1 + self.marginal_change_thres)
 
     def _is_significant_downward_move(self, current: float, reference: float) -> bool:
         """
@@ -66,29 +62,55 @@ class TernaryCTL(BaseLabeller):
         Returns:
             bool: True if the current price is a significant downward move, False otherwise.
         """
-        return current <= reference - self.marginal_change_thres * reference
+        return current <= reference * (1 - self.marginal_change_thres)
 
-    def _update_labels(self, start: int, end: int, new_label: int) -> None:
+    def _generate_label_values(self) -> list[int]:
+        """Convert Labels enum to their integer values"""
+        return [label.value for label in self.labels]
+
+    def _right_pad_labels(self, total_length: int) -> list[int]:
         """
-        Update the labels in a range of the labels list.
+        Right pad the labels list by duplicating the last element.
+        Args:
+            total_length (int): The target length of the padded list.
+
+        Returns:
+            list[Labels]: Padded list of label values with length equal to target_length.
+        """
+        if len(self.labels) == 0:
+            return []
+        self.labels += [self.labels[-1]] * (total_length - len(self.labels))
+
+    def _update_labels(self, trend_start: int, current_idx: int, label: Labels) -> None:
+        """
+        Update the labels list with a new label value.
 
         Args:
-            start (int): The start index.
-            end (int): The end index.
-            new_label (int): The new label to assign to the range.
+            trend_start (int): The starting index of the trend.
+            current_idx (int): The current index of the price.
+            label (Labels): The new label value to be added.
         """
-        self.labels[start:end] = [new_label] * (end - start)
+        self.labels += [label] * (current_idx - trend_start)
+
+    def _has_price_crossed_reference_price(
+        self, previous_price: float, current_price: float, reference_price: float
+    ) -> bool:
+        """
+        Check if the price has crossed the reference price.
+        """
+        return (previous_price - reference_price) * (
+            current_price - reference_price
+        ) <= 0
 
     def get_labels(
-        self,
-        prices: list[float],
-    ) -> list[int]:
+        self, prices: list[float], return_labels_as_int: bool = True
+    ) -> Union[list[int], list[Labels]]:
         """
         Labels trends in a time series of closing prices using a ternary classification approach.
         The method identifies three distinct states in price movements:
-            - Upward trends (label: 1)
-            - Downward trends (label: -1)
-            - No-action (label: 0)
+            - Upward trends (label: Labels.UP)
+            - Downward trends (label: Labels.DOWN)
+            - No-action (label: Labels.NEUTRAL)
 
         The algorithm uses two key parameters:
             - marginal_change_thres: Defines the threshold for significant price movements as a percentage
@@ -100,59 +122,64 @@ class TernaryCTL(BaseLabeller):
 
         Parameters:
             prices (list[float]): List of closing prices.
+            return_labels_as_int (bool, optional): If True, returns integer labels (-1, 0, 1),
+                                                  if False returns Labels enum values. Defaults to True.
 
         Returns:
-            list[int]: List of labels where 1 indicates an upward trend,
-                    -1 indicates a downward trend, and 0 indicates no-action.
+            Union[list[int], list[Labels]]: List of labels. If return_labels_as_int is True, returns integers (-1, 0, 1),
+                                          otherwise returns Labels enum values.
         """
         self._verify_time_series(prices)
-
-        # Initialize labels with upward trend detection
-        self._find_upward_trend(prices)
+        # Initialize labels
+        self.labels = self._get_first_label(prices)
+        # Initialize trend start index
         trend_start = 0
-
+        # Iterate over prices starting from the second price
         for current_idx, current_price in enumerate(prices[1:], start=1):
             reference_price = prices[trend_start]
             window_exceeded = current_idx - trend_start > self.window_size
 
-            match self.labels[current_idx]:
-                case 1:  # Upward trend
+            match self.labels[-1]:
+                case Labels.UP:  # Upward trend
                     if current_price > reference_price:
-                        self._update_labels(trend_start, current_idx, 1)
+                        self._update_labels(trend_start, current_idx, Labels.UP)
                     elif self._is_significant_downward_move(
                         current_price, reference_price
                     ):
-                        self._update_labels(trend_start, current_idx, -1)
+                        self._update_labels(trend_start, current_idx, Labels.DOWN)
                     elif window_exceeded:
-                        self._update_labels(trend_start, current_idx, 0)
+                        self._update_labels(trend_start, current_idx, Labels.NEUTRAL)
                     else:
                         continue
                     trend_start = current_idx
 
-                case -1:  # Downward trend
+                case Labels.DOWN:  # Downward trend
                     if current_price < reference_price:
-                        self._update_labels(trend_start, current_idx, -1)
+                        self._update_labels(trend_start, current_idx, Labels.DOWN)
                     elif self._is_significant_upward_move(
                         current_price, reference_price
                     ):
-                        self._update_labels(trend_start, current_idx, 1)
+                        self._update_labels(trend_start, current_idx, Labels.UP)
                     elif window_exceeded:
-                        self._update_labels(trend_start, current_idx, 0)
+                        self._update_labels(trend_start, current_idx, Labels.NEUTRAL)
                     else:
                         continue
                     trend_start = current_idx
 
-                case 0:  # No trend
+                case Labels.NEUTRAL:  # No trend
                     if self._is_significant_upward_move(current_price, reference_price):
-                        self._update_labels(trend_start, current_idx, 1)
+                        self._update_labels(trend_start, current_idx, Labels.UP)
                     elif self._is_significant_downward_move(
                         current_price, reference_price
                     ):
-                        self._update_labels(trend_start, current_idx, -1)
+                        self._update_labels(trend_start, current_idx, Labels.DOWN)
                     elif window_exceeded:
-                        self._update_labels(trend_start, current_idx, 0)
+                        self._update_labels(trend_start, current_idx, Labels.NEUTRAL)
                     else:
                         continue
                     trend_start = current_idx
 
-        return self.labels
+        self._right_pad_labels(len(prices))
+        return (
+            extract_label_values(self.labels) if return_labels_as_int else self.labels
+        )
