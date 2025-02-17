@@ -205,9 +205,12 @@ class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
 class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
     """Oracle Ternary Trend Labeller.
 
-    This class implements a ternary version of the Oracle Trend Labelling algorithm,
-    which identifies three distinct states in price movements. Transitions between
-    downtrend and uptrend must go through the neutral state.
+    This class implements an adaptation of the Oracle Trend Labelling algorithm
+    to a three-state setting with dynamic programming. This consists is two main ideas,
+    managing the general behaviour through the neutral state:
+    1. Transitions between downtrend and uptrend must go through the neutral state.
+    2. The reward for staying in the neutral state is calculated differently than
+        the reward for staying in a downtrend or uptrend.
 
     The algorithm identifies three states:
         - Upward trends (label: Labels.UP or 1)
@@ -216,32 +219,33 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
 
     Attributes:
         transaction_cost (float): Inherited from BaseOracleTrendLabeller.
-        trend_coeff (float): Coefficient for weighting price changes in neutral state.
+        neutral_reward_factor (float): Coefficient for tuning the reward for staying in the neutral state.
+        Lower values ease the switch into downtrends and uptrends.
 
     Example:
-        >>> labeller = OracleTernaryTrendLabeller(transaction_cost=0.001, trend_coeff=0.5)
+        >>> labeller = OracleTernaryTrendLabeller(transaction_cost=0.001, neutral_reward_factor=0.5)
         >>> prices = [1.0, 1.15, 1.2, 1.18, 1.0]
         >>> labels = labeller.get_labels(prices)
         >>> print(labels)  # [-1, 1, 1, 0, -1]
 
     Note:
-        The trend_coeff parameter influences how the algorithm weights price changes
-        in the neutral state. Higher values make the neutral state more attractive
-        for small price movements.
+        The neutral_reward_factor parameter influences how the algorithm weights price changes
+        in the neutral state.
+        The neutral_reward_factor is usually best set lower then 1.0, tuned up together with the transaction_cost.
     """
 
-    def __init__(self, transaction_cost: float, trend_coeff: float) -> None:
+    def __init__(self, transaction_cost: float, neutral_reward_factor: float) -> None:
         """
         Initialize the ternary trend labeller.
 
         Args:
             transaction_cost (float): Cost coefficient for switching between trends.
-            trend_coeff (float): Trend coefficient for weighting price changes.
+            neutral_reward_factor (float): Trend coefficient for weighting price changes.
         """
         super().__init__(transaction_cost)
-        if not isinstance(trend_coeff, float):
-            raise TypeError("trend_coeff must be a float.")
-        self.trend_coeff = trend_coeff
+        if not isinstance(neutral_reward_factor, float):
+            raise TypeError("neutral_reward_factor must be a float.")
+        self.neutral_reward_factor = neutral_reward_factor
 
     def _scale_labels(self, labels: NDArray) -> NDArray:
         """
@@ -270,7 +274,7 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
             # Rewards for staying in same state
             P[t, 0, 0] = -price_change  # Reward for staying in downtrend
             P[t, 1, 1] = (
-                abs(price_change) * self.trend_coeff
+                abs(price_change) * self.neutral_reward_factor
             )  # No reward for staying neutral
             P[t, 2, 2] = price_change  # Reward for staying in uptrend
 

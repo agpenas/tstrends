@@ -14,7 +14,7 @@ def binary_labeller():
 
 @pytest.fixture
 def ternary_labeller():
-    return OracleTernaryTrendLabeller(transaction_cost=0.001, trend_coeff=0.5)
+    return OracleTernaryTrendLabeller(transaction_cost=0.001, neutral_reward_factor=0.5)
 
 
 class TestOracleBinaryTrendLabeller:
@@ -135,14 +135,14 @@ class TestOracleTernaryTrendLabeller:
         "invalid_params,error_type,error_match",
         [
             (
-                {"transaction_cost": 1, "trend_coeff": 0.5},
+                {"transaction_cost": 1, "neutral_reward_factor": 0.5},
                 TypeError,
                 "transaction_cost must be a float.",
             ),
             (
-                {"transaction_cost": 0.001, "trend_coeff": 1},
+                {"transaction_cost": 0.001, "neutral_reward_factor": 1},
                 TypeError,
-                "trend_coeff must be a float.",
+                "neutral_reward_factor must be a float.",
             ),
         ],
     )
@@ -222,7 +222,7 @@ class TestOracleTernaryTrendLabeller:
 
         # Create new labeller with higher transaction cost
         high_cost_labeller = OracleTernaryTrendLabeller(
-            transaction_cost=0.01, trend_coeff=0.5
+            transaction_cost=0.01, neutral_reward_factor=0.5
         )
         high_cost_labels = high_cost_labeller.get_labels(
             time_series, return_labels_as_int=True

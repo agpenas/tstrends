@@ -42,9 +42,9 @@ class TestOptimizationBounds:
         """Test bounds for OracleTernaryTrendLabeller."""
         bounds = OptimizationBounds().get_bounds(OracleTernaryTrendLabeller)
         assert "transaction_cost" in bounds
-        assert "trend_coeff" in bounds
+        assert "neutral_reward_factor" in bounds
         assert bounds["transaction_cost"] == (0.0, 1.0)
-        assert bounds["trend_coeff"] == (0.0, 1.0)
+        assert bounds["neutral_reward_factor"] == (0.0, 1.0)
 
     def test_unsupported_labeller(self):
         """Test error handling for unsupported labeller class."""
@@ -62,7 +62,10 @@ class TestOptimizationBounds:
             (BinaryCTL, ["omega"]),
             (TernaryCTL, ["marginal_change_thres", "window_size"]),
             (OracleBinaryTrendLabeller, ["transaction_cost"]),
-            (OracleTernaryTrendLabeller, ["transaction_cost", "trend_coeff"]),
+            (
+                OracleTernaryTrendLabeller,
+                ["transaction_cost", "neutral_reward_factor"],
+            ),
         ],
         ids=[
             "binary_ctl",

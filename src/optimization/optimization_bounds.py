@@ -64,5 +64,5 @@ class OptimizationBounds:
         elif labeller_class == OracleTernaryTrendLabeller:
             return {
                 "transaction_cost": (0.0, 0.01),
-                "trend_coeff": (0.0, 0.1),
+                "neutral_reward_factor": (0.0, 0.1),
             }
