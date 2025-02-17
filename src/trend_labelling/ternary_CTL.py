@@ -18,7 +18,7 @@ class TernaryCTL(BaseLabeller):
 
     Attributes:
         marginal_change_thres (float): Threshold for significant price movements as a percentage.
-        window_size (int): Maximum window to look for trend confirmation before resetting state.
+        window_size (int): Maximum window to look for trend confirmation before resetting state to neutral.
         labels (list[Labels]): List to store computed trend labels.
 
     Example:
