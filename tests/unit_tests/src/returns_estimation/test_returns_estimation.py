@@ -206,3 +206,23 @@ class TestReturnsEstimatorWithFees:
         expected_return = 3 - expected_fees
         result = fees_estimator.estimate_return(prices, labels)
         assert result == expected_return
+
+    def test_fully_downwards_trend(self, fees_estimator):
+        """Test estimation with a fully downwards trend."""
+        prices = [100.0, 99.0, 98.0, 97.0]
+        labels = [-1, -1, -1, -1]  # Fully downwards trend
+
+        expected_fees = 4 * 0.0010 + 100 * 0.002
+        expected_return = 3 - expected_fees
+        result = fees_estimator.estimate_return(prices, labels)
+        assert result == expected_return
+
+    def test_mixed_trend(self, fees_estimator):
+        """Test estimation with a mixed trend."""
+        prices = [100.0, 101.0, 99.0, 102.0]
+        labels = [1, 0, -1, 1]  # Upwards -> Neutral -> Downwards -> Upwards
+
+        expected_fees = 2 * 0.0005 + 0.001 + 99 * 0.002 + (100 + 102) * 0.001
+        expected_return = 5 - expected_fees
+        result = fees_estimator.estimate_return(prices, labels)
+        assert result == expected_return

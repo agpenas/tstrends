@@ -5,14 +5,14 @@ from .base_labeller import BaseLabeller
 from .label_scaling import Labels, scale_binary, scale_ternary
 
 
-class BaseOracleTrendLabeler(BaseLabeller):
+class BaseOracleTrendLabeller(BaseLabeller):
     """
-    Base class for Oracle Trend Labelers.
+    Base class for Oracle Trend Labellers.
     """
 
     def __init__(self, transaction_cost: float) -> None:
         """
-        Initialize the base Oracle Trend Labeler.
+        Initialize the base Oracle Trend Labeller.
 
         Args:
             transaction_cost (float): Cost of making a transaction
@@ -104,14 +104,14 @@ class BaseOracleTrendLabeler(BaseLabeller):
         )
 
 
-class OracleBinaryTrendLabeler(BaseOracleTrendLabeler):
+class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
     """
-    Oracle Binary Trend Labeler class, adapted to Python from the original paper by T. Kovačević, A. Merćep, S. Begušić and Z. Kostanjčar, "Optimal Trend Labeling in Financial Time Series,", doi: 10.1109/ACCESS.2023.3303283.
+    Oracle Binary Trend Labeller class, adapted to Python from the original paper by T. Kovačević, A. Merćep, S. Begušić and Z. Kostanjčar, "Optimal Trend Labeling in Financial Time Series,", doi: 10.1109/ACCESS.2023.3303283.
     """
 
     def __init__(self, transaction_cost: float) -> None:
         """
-        Initialize the binary trend labeler.
+        Initialize the binary trend labeller.
         """
         super().__init__(transaction_cost)
 
@@ -165,15 +165,15 @@ class OracleBinaryTrendLabeler(BaseOracleTrendLabeler):
         return S
 
 
-class OracleTernaryTrendLabeler(BaseOracleTrendLabeler):
+class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
     """
-    Oracle Ternary Trend Labeler class that identifies three states: downtrend (0), neutral (1), and uptrend (2).
+    Oracle Ternary Trend Labeller class that identifies three states: downtrend (0), neutral (1), and uptrend (2).
     Transitions between downtrend and uptrend must go through the neutral state.
     """
 
     def __init__(self, transaction_cost: float, trend_coeff: float) -> None:
         """
-        Initialize the ternary trend labeler.
+        Initialize the ternary trend labeller.
 
         Args:
             transaction_cost (float): Cost coefficient for switching between trends.

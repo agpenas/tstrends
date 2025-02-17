@@ -1,23 +1,23 @@
 import pytest
 import numpy as np
 from trend_labelling.oracle_labeller import (
-    OracleBinaryTrendLabeler,
-    OracleTernaryTrendLabeler,
+    OracleBinaryTrendLabeller,
+    OracleTernaryTrendLabeller,
 )
 from trend_labelling.label_scaling import Labels
 
 
 @pytest.fixture
 def binary_labeller():
-    return OracleBinaryTrendLabeler(transaction_cost=0.001)
+    return OracleBinaryTrendLabeller(transaction_cost=0.001)
 
 
 @pytest.fixture
 def ternary_labeller():
-    return OracleTernaryTrendLabeler(transaction_cost=0.001, trend_coeff=0.5)
+    return OracleTernaryTrendLabeller(transaction_cost=0.001, trend_coeff=0.5)
 
 
-class TestOracleBinaryTrendLabeler:
+class TestOracleBinaryTrendLabeller:
     @pytest.mark.parametrize(
         "invalid_params,error_type,error_match",
         [
@@ -31,7 +31,7 @@ class TestOracleBinaryTrendLabeler:
     def test_initialization_invalid_type(self, invalid_params, error_type, error_match):
         """Test initialization with invalid parameter types."""
         with pytest.raises(error_type, match=error_match):
-            OracleBinaryTrendLabeler(**invalid_params)
+            OracleBinaryTrendLabeller(**invalid_params)
 
     @pytest.mark.parametrize(
         "time_series,expected_labels,test_name",
@@ -130,7 +130,7 @@ class TestOracleBinaryTrendLabeler:
             binary_labeller.get_labels(invalid_input)
 
 
-class TestOracleTernaryTrendLabeler:
+class TestOracleTernaryTrendLabeller:
     @pytest.mark.parametrize(
         "invalid_params,error_type,error_match",
         [
@@ -149,7 +149,7 @@ class TestOracleTernaryTrendLabeler:
     def test_initialization_invalid_type(self, invalid_params, error_type, error_match):
         """Test initialization with invalid parameter types."""
         with pytest.raises(error_type, match=error_match):
-            OracleTernaryTrendLabeler(**invalid_params)
+            OracleTernaryTrendLabeller(**invalid_params)
 
     @pytest.mark.parametrize(
         "time_series,expected_labels,test_name",
@@ -221,7 +221,7 @@ class TestOracleTernaryTrendLabeler:
         )
 
         # Create new labeller with higher transaction cost
-        high_cost_labeller = OracleTernaryTrendLabeler(
+        high_cost_labeller = OracleTernaryTrendLabeller(
             transaction_cost=0.01, trend_coeff=0.5
         )
         high_cost_labels = high_cost_labeller.get_labels(

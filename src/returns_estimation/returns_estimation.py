@@ -188,11 +188,9 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             or self.fees_config.sp_transaction_fees != 0
         ):
             fees += self._estimate_transaction_fees(prices, labels)
-            print(fees)
         if (
             self.fees_config.lp_holding_fees != 0
             or self.fees_config.sp_holding_fees != 0
         ):
             fees += self._estimate_holding_fees(prices, labels)
-            print(fees)
         return self._calculate_return(prices, labels) - fees

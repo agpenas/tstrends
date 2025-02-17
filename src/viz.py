@@ -5,7 +5,7 @@ def plot_trend_labels(
     time_series_list: list[str], labels: list[int], title: str = None
 ) -> None:
     """
-    Visualize the price series with trend labels.
+    Simple visualization of the price series with trend labels.
 
     Args:
         time_series_list (list[str]): The price series.
