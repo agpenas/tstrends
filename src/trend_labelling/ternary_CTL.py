@@ -4,10 +4,32 @@ from .label_scaling import Labels, extract_label_values
 
 
 class TernaryCTL(BaseLabeller):
-    """
-    Three-states continuous trend labeller class, adapted from the original paper by
-    Dezhkam, Arsalan et al. "A Bayesian-based classification framework for financial time series trend prediction."
-    https://doi.org/10.1007/s11227-022-04834-4
+    """Ternary Continuous Trend Labeller.
+
+    This class implements a ternary trend labelling algorithm based on the paper by
+    Dezhkam, Arsalan et al. "A Bayesian-based classification framework for financial
+    time series trend prediction."
+
+    The algorithm identifies three distinct states in price movements:
+        - Upward trends (label: Labels.UP or 1)
+        - Neutral trends (label: Labels.NEUTRAL or 0)
+        - Downward trends (label: Labels.DOWN or -1)
+
+    Attributes:
+        marginal_change_thres (float): Threshold for significant price movements as a percentage.
+        window_size (int): Maximum window to look for trend confirmation before resetting state.
+        labels (list[Labels]): List to store computed trend labels.
+
+    Example:
+        >>> labeller = TernaryCTL(marginal_change_thres=0.1, window_size=3)
+        >>> prices = [1.0, 1.15, 1.2, 1.18, 1.0]
+        >>> labels = labeller.get_labels(prices)
+        >>> print(labels)  # [-1, 1, 1, 0, -1]
+
+    Note:
+        The window_size parameter helps prevent the algorithm from getting stuck
+        in prolonged sideways movements by forcing a state transition after the
+        window is exceeded.
     """
 
     def __init__(self, marginal_change_thres: float, window_size: int) -> None:

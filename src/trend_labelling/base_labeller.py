@@ -7,11 +7,23 @@ T = TypeVar("T", list[int], list[Labels])
 
 
 class BaseLabeller(ABC):
-    """
-    Abstract base class for trend labellers.
+    """Abstract base class for trend labellers.
 
-    All trend labellers should inherit from this class and implement the get_labels method.
-    The class provides common input validation functionality.
+    This class serves as a template for all trend labelling implementations.
+    It provides common input validation functionality and defines the interface
+    that all trend labellers must implement.
+
+    Attributes:
+        None
+
+    Example:
+        To implement a new trend labeller, inherit from this class and implement
+        the get_labels method::
+
+            class MyLabeller(BaseLabeller):
+                def get_labels(self, time_series_list, return_labels_as_int=True):
+                    # Implementation here
+                    pass
     """
 
     def _verify_time_series(self, time_series_list: list[float]) -> None:

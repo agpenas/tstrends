@@ -7,8 +7,23 @@ from .fees_config import FeesConfig
 
 
 class BaseReturnEstimator(ABC):
-    """
-    Base class for return estimators.
+    """Abstract base class for return estimators.
+
+    This class serves as a template for all return estimation implementations.
+    It provides common input validation functionality and defines the interface
+    that all return estimators must implement.
+
+    Attributes:
+        None
+
+    Example:
+        To implement a new return estimator, inherit from this class and implement
+        the estimate_return method::
+
+            class MyEstimator(BaseReturnEstimator):
+                def estimate_return(self, prices, labels):
+                    # Implementation here
+                    return calculated_return
     """
 
     def _verify_input_data(self, prices: list[float]) -> None:

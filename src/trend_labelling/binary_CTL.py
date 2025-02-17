@@ -41,7 +41,32 @@ class TrendState:
 
 
 class BinaryCTL(BaseLabeller):
-    """Continuous Trend Labeller class, adapted to Python from the original paper by Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends". https://doi.org/10.3390/e22101162"""
+    """Binary Continuous Trend Labeller.
+
+    This class implements a binary trend labelling algorithm based on the paper by
+    Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial
+    Time Series Prediction Based on Trends".
+
+    The algorithm identifies two distinct states in price movements:
+        - Upward trends (label: Labels.UP or 1)
+        - Downward trends (label: Labels.DOWN or -1)
+
+    Attributes:
+        omega (float): The proportion threshold parameter of the trend definition.
+        _state (TrendState): Internal state for trend tracking.
+        _labels (list[Labels]): List to store computed trend labels.
+
+    Example:
+        >>> labeller = BinaryCTL(omega=0.1)
+        >>> prices = [1.0, 1.15, 1.2, 1.0]
+        >>> labels = labeller.get_labels(prices)
+        >>> print(labels)  # [-1, 1, 1, -1]
+
+    Note:
+        The omega parameter determines how significant a price movement must be
+        to be considered a trend change. Higher values result in fewer trend
+        changes being identified.
+    """
 
     def __init__(self, omega: float) -> None:
         """

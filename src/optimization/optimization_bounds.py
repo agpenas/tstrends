@@ -9,7 +9,24 @@ from trend_labelling import (
 
 
 class OptimizationBounds:
-    """Class to provide default bounds for optimization parameters."""
+    """Class to provide default bounds for optimization parameters.
+
+    This class provides a centralized way to get the default parameter bounds
+    for different trend labeller implementations. These bounds are used in
+    the optimization process to constrain the search space.
+
+    Attributes:
+        implemented_labellers (list[Type[BaseLabeller]]): List of supported labeller classes.
+
+    Example:
+        >>> bounds = OptimizationBounds()
+        >>> binary_bounds = bounds.get_bounds(BinaryCTL)
+        >>> print(binary_bounds)  # {'omega': (0.0, 0.01)}
+
+    Note:
+        The bounds are carefully chosen based on empirical testing and the
+        theoretical constraints of each labeller implementation.
+    """
 
     implemented_labellers = [
         BinaryCTL,

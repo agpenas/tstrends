@@ -12,6 +12,31 @@ INTEGER_PARAMS = ["window_size"]
 
 
 class Optimizer:
+    """Bayesian optimization for trend labelling parameters.
+
+    This class implements Bayesian optimization to find the optimal parameters
+    for trend labelling algorithms. It uses the returns from a returns estimator
+    as the objective function to maximize.
+
+    Attributes:
+        returns_estimator (Type[BaseReturnEstimator]): The returns estimator class to use.
+        initial_points (int): Number of initial random points for optimization.
+        nb_iter (int): Number of optimization iterations.
+        random_state (int | None): Random seed for reproducibility.
+        _optimizer (BayesianOptimization | None): Internal optimizer instance.
+
+    Example:
+        >>> from returns_estimation import SimpleReturnEstimator
+        >>> optimizer = Optimizer(SimpleReturnEstimator, initial_points=5, nb_iter=100)
+        >>> result = optimizer.optimize(BinaryCTL, prices)
+        >>> print(result['params'])  # {'omega': 0.005}
+
+    Note:
+        The optimization process uses Bayesian optimization with Gaussian processes,
+        which is particularly effective for expensive-to-evaluate objective functions
+        with a small number of parameters.
+    """
+
     def __init__(
         self,
         returns_estimator: Type[BaseReturnEstimator],

@@ -6,8 +6,24 @@ from .label_scaling import Labels, scale_binary, scale_ternary
 
 
 class BaseOracleTrendLabeller(BaseLabeller):
-    """
-    Base class for Oracle Trend Labellers.
+    """Base class for Oracle Trend Labellers.
+
+    This class implements the core functionality of the Oracle Trend Labelling algorithm,
+    which uses dynamic programming to find optimal trend labels by maximizing returns
+    while considering transaction costs.
+
+    The algorithm works in three main steps:
+        1. Compute transition costs between states
+        2. Forward pass to calculate cumulative returns
+        3. Backward pass to determine optimal labels
+
+    Attributes:
+        transaction_cost (float): Cost coefficient for making a transaction between states.
+
+    Note:
+        This is an abstract base class. Concrete implementations must provide
+        the _scale_labels method to define how raw labels are scaled to the
+        final output format.
     """
 
     def __init__(self, transaction_cost: float) -> None:
@@ -105,8 +121,29 @@ class BaseOracleTrendLabeller(BaseLabeller):
 
 
 class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
-    """
-    Oracle Binary Trend Labeller class, adapted to Python from the original paper by T. Kovačević, A. Merćep, S. Begušić and Z. Kostanjčar, "Optimal Trend Labeling in Financial Time Series,", doi: 10.1109/ACCESS.2023.3303283.
+    """Oracle Binary Trend Labeller.
+
+    This class implements a binary version of the Oracle Trend Labelling algorithm,
+    adapted from the paper by T. Kovačević, A. Merćep, S. Begušić and Z. Kostanjčar,
+    "Optimal Trend Labeling in Financial Time Series".
+
+    The algorithm identifies two distinct states:
+        - Upward trends (label: Labels.UP or 1)
+        - Downward trends (label: Labels.DOWN or -1)
+
+    Attributes:
+        transaction_cost (float): Inherited from BaseOracleTrendLabeller.
+
+    Example:
+        >>> labeller = OracleBinaryTrendLabeller(transaction_cost=0.001)
+        >>> prices = [1.0, 1.15, 1.2, 1.0]
+        >>> labels = labeller.get_labels(prices)
+        >>> print(labels)  # [-1, 1, 1, -1]
+
+    Note:
+        The transaction cost parameter influences how readily the algorithm
+        switches between trends. Higher costs result in more stable trend
+        assignments.
     """
 
     def __init__(self, transaction_cost: float) -> None:
@@ -166,9 +203,31 @@ class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
 
 
 class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
-    """
-    Oracle Ternary Trend Labeller class that identifies three states: downtrend (0), neutral (1), and uptrend (2).
-    Transitions between downtrend and uptrend must go through the neutral state.
+    """Oracle Ternary Trend Labeller.
+
+    This class implements a ternary version of the Oracle Trend Labelling algorithm,
+    which identifies three distinct states in price movements. Transitions between
+    downtrend and uptrend must go through the neutral state.
+
+    The algorithm identifies three states:
+        - Upward trends (label: Labels.UP or 1)
+        - Neutral trends (label: Labels.NEUTRAL or 0)
+        - Downward trends (label: Labels.DOWN or -1)
+
+    Attributes:
+        transaction_cost (float): Inherited from BaseOracleTrendLabeller.
+        trend_coeff (float): Coefficient for weighting price changes in neutral state.
+
+    Example:
+        >>> labeller = OracleTernaryTrendLabeller(transaction_cost=0.001, trend_coeff=0.5)
+        >>> prices = [1.0, 1.15, 1.2, 1.18, 1.0]
+        >>> labels = labeller.get_labels(prices)
+        >>> print(labels)  # [-1, 1, 1, 0, -1]
+
+    Note:
+        The trend_coeff parameter influences how the algorithm weights price changes
+        in the neutral state. Higher values make the neutral state more attractive
+        for small price movements.
     """
 
     def __init__(self, transaction_cost: float, trend_coeff: float) -> None:
