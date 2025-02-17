@@ -1,0 +1,28 @@
+{
+    "BinaryCTL": {
+        "params": {
+            "omega": 0.009999009770092316
+        },
+        "target": 29.704324000000128
+    },
+    "TernaryCTL": {
+        "params": {
+            "marginal_change_thres": 0.015602708025603209,
+            "window_size": 780
+        },
+        "target": 26.729374000000035
+    },
+    "OracleBinaryTrendLabeller": {
+        "params": {
+            "transaction_cost": 0.009507143064099163
+        },
+        "target": 34.421674000000074
+    },
+    "OracleTernaryTrendLabeller": {
+        "params": {
+            "transaction_cost": 0.008661761457749353,
+            "neutral_reward_factor": 0.005808361216819946
+        },
+        "target": 34.23403999999996
+    }
+}
