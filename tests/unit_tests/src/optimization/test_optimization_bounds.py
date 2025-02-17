@@ -22,7 +22,7 @@ class TestOptimizationBounds:
         """Test bounds for BinaryCTL."""
         bounds = OptimizationBounds().get_bounds(BinaryCTL)
         assert "omega" in bounds
-        assert bounds["omega"] == (0.0, 1.0)
+        assert bounds["omega"] == (0.0, 0.01)
 
     def test_ternary_ctl_bounds(self):
         """Test bounds for TernaryCTL."""
@@ -36,15 +36,15 @@ class TestOptimizationBounds:
         """Test bounds for OracleBinaryTrendLabeller."""
         bounds = OptimizationBounds().get_bounds(OracleBinaryTrendLabeller)
         assert "transaction_cost" in bounds
-        assert bounds["transaction_cost"] == (0.0, 1.0)
+        assert bounds["transaction_cost"] == (0.0, 0.01)
 
     def test_oracle_ternary_bounds(self):
         """Test bounds for OracleTernaryTrendLabeller."""
         bounds = OptimizationBounds().get_bounds(OracleTernaryTrendLabeller)
         assert "transaction_cost" in bounds
         assert "neutral_reward_factor" in bounds
-        assert bounds["transaction_cost"] == (0.0, 1.0)
-        assert bounds["neutral_reward_factor"] == (0.0, 1.0)
+        assert bounds["transaction_cost"] == (0.0, 0.01)
+        assert bounds["neutral_reward_factor"] == (0.0, 0.1)
 
     def test_unsupported_labeller(self):
         """Test error handling for unsupported labeller class."""
