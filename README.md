@@ -6,35 +6,35 @@
 
 ## Introduction
 
-A robust Python package for automated trend labelling (a.k.a classiying trends) in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](#bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main capabilities:
+A robust Python package for automated trend labelling (a.k.a classiying trends) in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](#books-bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main capabilities:
 - <ins>**Two-state**</ins> (upwards/downwards) and <ins>**three-state**</ins> (upwards/neutral/downwards) trend labelling algorithms.
 - Returns estimation with transaction costs and holding fees.
 - Bayesian parameter optimization to select the optimal labelling (powered by [bayesian-optimization](https://github.com/bayesian-optimization/BayesianOptimization)).
 
 
 
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Core Components](#core-components)
-  - [Trend Labellers](#trend-labellers)
-  - [Returns Estimation](#returns-estimation)
-  - [Parameter Optimization](#parameter-optimization)
+## :scroll: Table of Contents
+- [Features](#sparkles-features)
+- [Installation](#hammer_and_wrench-installation)
+- [Quick Start](#rocket-quick-start)
+- [Core Components](#nut_and_bolt-core-components)
+  - [A) Trend Labellers](#a-trend-labellers)
+  - [B) Returns Estimation](#b-returns-estimation)
+  - [C) Parameter Optimization](#c-parameter-optimization)
 - [Usage Examples](#usage-examples)
-- [Contributing](#contributing)
-- [Bibliography](#bibliography)
-- [License](#license)
+- [Contributing](#handshake-contributing)
+- [Bibliography](#books-bibliography)
+- [License](#scroll-license)
 
 
-## Features
+## :sparkles: Features
 
 ### Trend Labelling Approaches
 - **Continuous Trend Labelling (CTL)**:
-  - Binary CTL (Up/Down trends) - Based on [Wu et al.](#bibliography)
-  - Ternary CTL (Up/Neutral/Down trends) - Inspired by [Dezhkam et al.](#bibliography)
+  - Binary CTL (Up/Down trends) - Based on [Wu et al.](#books-bibliography)
+  - Ternary CTL (Up/Neutral/Down trends) - Inspired by [Dezhkam et al.](#books-bibliography)
 - **Oracle Labelling**
-  - Binary Oracle (optimizes for maximum returns) - Based on [Kovačević et al.](#bibliography)
+  - Binary Oracle (optimizes for maximum returns) - Based on [Kovačević et al.](#books-bibliography)
   - Ternary Oracle (includes neutral state optimization) 
 
 ### Returns Estimation
@@ -50,13 +50,13 @@ A robust Python package for automated trend labelling (a.k.a classiying trends) 
 - Empirically tested and customizable parameter bounds
 
 
-## Installation
+## :hammer_and_wrench: Installation
 
 ```bash
 pip install python-trend-labeller
 ```
 
-## Quick Start
+## :rocket: Quick Start
 
 ```python
 from trend_labelling import BinaryCTL
@@ -90,14 +90,14 @@ optimal_labeller = BinaryCTL(
 optimal_labels = optimal_labeller.get_labels(prices)
 ```
 
-## Core Components
+## :nut_and_bolt: Core Components
 
-### Trend Labellers
+### A) Trend Labellers
 
 See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb) for a detailed example of the trend labellers.
 
 #### 1. Labellers based on Continuous Trend Labelling (CTL)
-- **BinaryCTL**: Implements the Wu et al.[^1] algorithm for binary trend labelling. When the market rises above a certain proportion parameter <ins>omega</ins> from the current lowest point or recedes from the current highest point to a certain proportion parameter <ins>omega</ins>, the two segments are labeled as rising and falling segments, respectively. 
+- **BinaryCTL**: Implements the [Wu et al.](#books-bibliography) algorithm for binary trend labelling. When the market rises above a certain proportion parameter <ins>omega</ins> from the current lowest point or recedes from the current highest point to a certain proportion parameter <ins>omega</ins>, the two segments are labeled as rising and falling segments, respectively. 
   - Parameters:
     - `omega`: Threshold for trend changes (float). Key to manage the sensitivity of the labeller.\
     **For instance, for a value of 0.001, 0.005, 0.01, 0.015, the labeller behaves as follows:**
@@ -105,7 +105,7 @@ See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb
     <p align="center"><img src="images/binary_ctl_omega_effect.png" alt="Omega effect on binary CTL" width="800"/></p>
 
   
-- **TernaryCTL**: Extends CTL with a neutral state. It introduces a window_size parameter to look for trend confirmation before resetting state to neutral, similar to the second loop in the Dezhkam et al.[^2] algorithm.
+- **TernaryCTL**: Extends CTL with a neutral state. It introduces a window_size parameter to look for trend confirmation before resetting state to neutral, similar to the second loop in the [Dezhkam et al.](#books-bibliography) algorithm.
   - Parameters:
     - `marginal_change_thres`: Threshold for significant time series movements as a percentage of the current value.
     - `window_size`: Maximum window to look for trend confirmation before resetting state to neutral.\
@@ -113,8 +113,8 @@ See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb
 
     <p align="center"><img src="images/ternaryCTL_params_effect.png" alt="Ternary CTL parameters effect" width="800"/></p>
 
-#### 2. Labellers based on the Oracle Labeller [^3]
-- **OracleBinaryTrendLabeller**: Implements the Kovačević et al.[^3] algorithm for binary trend labelling, optimizing labels for maximum returns given a transaction cost parameter. Algorithm complexity is optimized via dynamic programming.
+#### 2. Labellers based on the Oracle Labeller
+- **OracleBinaryTrendLabeller**: Implements the [Kovačević et al.](#books-bibliography) algorithm for binary trend labelling, optimizing labels for maximum returns given a transaction cost parameter. Algorithm complexity is optimized via dynamic programming.
   - Parameters:
     - `transaction_cost`: Cost coefficient for position changes.\
     **For instance, for different values of `transaction_cost`, the labeller behaves as follows:**
@@ -129,7 +129,7 @@ See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb
 
     <p align="center"><img src="images/oracle_ternary_params_effect.png" alt="Oracle ternary neutral reward factor effect" width="800"/></p>
 
-### Returns Estimation
+### B) Returns Estimation
 
 The package provides flexible returns estimation with transaction costs. It introduces:
 - **Returns estimation**, based on the price fluctuations correctly labelled vs incorrectly labelled.
@@ -154,7 +154,7 @@ estimator = ReturnsEstimatorWithFees(fees_config)
 returns = estimator.estimate_return(prices, labels)
 ```
 
-### Parameter Optimization
+### C) Parameter Optimization
 
 The package uses Bayesian optimization to find optimal parameters, optimizing the returns for a given fees/no fees configuration.
 By definition this is a bounded optimization problem, and some default bounds are provided for each labeller implementation:
@@ -194,27 +194,31 @@ print(f"Maximum return: {result['target']}")
 ```
 
 > [!WARNING]
-> The acquisition function is set to UpperConfidenceBound(kappa=2) by default. This is a good default choice that balances exploration and exploitation, but you may want to experiment with other acquisition functions like bayes_opt.acquisition.ExpectedImprovement() or bayes_opt.acquisition.ProbabilityOfImprovement() for your specific use case.
+> The acquisition function is set to UpperConfidenceBound(kappa=2) by default. This is a good default choice that balances exploration and exploitation, but you may want to experiment with other values for kappa or other acquisition functions like bayes_opt.acquisition.ExpectedImprovement() or bayes_opt.acquisition.ProbabilityOfImprovement() for your specific use case.
 
 > [!CAUTION]
 > The default bounds are presetted for relatively constant time series and may not be optimal for all use cases. It is recommended to test the waters by testing the labels with some parameters at different orders of magnitude before optimizing. See [optimization example notebook](notebooks/optimization_example.ipynb) for a detailed example of parameter optimization.
 
-## Contributing
+## :handshake: Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate and adhere to the existing coding style.
 
-## :handshake: Bibliography
+## :books: Bibliography
 
 The algorithms implemented in this package are based or inspired by the following academic papers:
 
-[^1]. Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends". *Referenced in BinaryCTL implementation.*
+[1]: #wu-2021 "Wu et al. (2021)"
+[2]: #dezhkam-2021 "Dezhkam et al. (2021)"
+[3]: #kovacevic-2021 "Kovačević et al. (2021)"
 
-[^2]. Dezhkam, A., Moazeni, S., & Moazeni, S. "A Bayesian-based classification framework for financial time series trend prediction". *Referenced in TernaryCTL implementation.*
+1. <a name="wu-2021"></a>Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends". *Referenced in BinaryCTL implementation.*
 
-[^3]. Kovačević, T., Merćep, A., Begušić, S., & Kostanjčar, Z. "Optimal Trend Labeling in Financial Time Series". *Referenced in Oracle Labellers implementation.*
+2. <a name="dezhkam-2021"></a>Dezhkam, A., Moazeni, S., & Moazeni, S. "A Bayesian-based classification framework for financial time series trend prediction". *Referenced in TernaryCTL implementation.*
 
-## License
+3. <a name="kovacevic-2021"></a>Kovačević, T., Merćep, A., Begušić, S., & Kostanjčar, Z. "Optimal Trend Labeling in Financial Time Series". *Referenced in Oracle Labellers implementation.*
 
-[MIT License](LICENSE)
+## :scroll: License
+
+[BSD-2-Clause](LICENSE)
