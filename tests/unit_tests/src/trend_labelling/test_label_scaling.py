@@ -4,8 +4,13 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from trend_labelling.label_scaling import (BINARY_MAP, TERNARY_MAP, Labels,
-                                           scale_binary, scale_ternary)
+from trend_labelling.label_scaling import (
+    BINARY_MAP,
+    TERNARY_MAP,
+    Labels,
+    scale_binary,
+    scale_ternary,
+)
 
 
 class TestBinaryScaling:

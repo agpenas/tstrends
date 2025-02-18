@@ -1,9 +1,13 @@
 import pytest
 
 from optimization import OptimizationBounds
-from trend_labelling import (BaseLabeller, BinaryCTL,
-                             OracleBinaryTrendLabeller,
-                             OracleTernaryTrendLabeller, TernaryCTL)
+from trend_labelling import (
+    BaseLabeller,
+    BinaryCTL,
+    OracleBinaryTrendLabeller,
+    OracleTernaryTrendLabeller,
+    TernaryCTL,
+)
 
 
 @pytest.fixture
