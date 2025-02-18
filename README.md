@@ -6,7 +6,7 @@
 
 ## Introduction
 
-A robust Python package for automated trend labelling (a.k.a classiying trends) in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](#books-bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main capabilities:
+A robust Python package for automated trend labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](#books-bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
 - <ins>**Two-state**</ins> (upwards/downwards) and <ins>**three-state**</ins> (upwards/neutral/downwards) trend labelling algorithms.
 - Returns estimation with transaction costs and holding fees.
 - Bayesian parameter optimization to select the optimal labelling (powered by [bayesian-optimization](https://github.com/bayesian-optimization/BayesianOptimization)).
@@ -22,6 +22,7 @@ A robust Python package for automated trend labelling (a.k.a classiying trends) 
   - [B) Returns Estimation](#b-returns-estimation)
   - [C) Parameter Optimization](#c-parameter-optimization)
 - [Usage Examples](#usage-examples)
+- [Roadmap](#construction-roadmap)
 - [Contributing](#handshake-contributing)
 - [Bibliography](#books-bibliography)
 - [License](#scroll-license)
@@ -198,6 +199,12 @@ print(f"Maximum return: {result['target']}")
 
 > [!CAUTION]
 > The default bounds are presetted for relatively constant time series and may not be optimal for all use cases. It is recommended to test the waters by testing the labels with some parameters at different orders of magnitude before optimizing. See [optimization example notebook](notebooks/optimization_example.ipynb) for a detailed example of parameter optimization.
+
+## :construction: Roadmap
+
+- [ ] Transform labels into trend momentum / potential.
+- [ ] Calculate returns for one subset of labels only.
+- [ ] Always good to explore more labellers.
 
 ## :handshake: Contributing
 
