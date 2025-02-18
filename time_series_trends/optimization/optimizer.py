@@ -2,8 +2,8 @@ from typing import Optional, Type, Union
 
 from bayes_opt import BayesianOptimization, acquisition
 
-from returns_estimation.returns_estimation import BaseReturnEstimator
-from trend_labelling import BaseLabeller
+from ..returns_estimation import BaseReturnEstimator
+from ..trend_labelling import BaseLabeller
 
 from .optimization_bounds import OptimizationBounds
 

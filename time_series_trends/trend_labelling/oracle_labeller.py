@@ -1,4 +1,4 @@
-from typing import Callable, List, Union
+from typing import Union
 
 import numpy as np
 from numpy.typing import NDArray
