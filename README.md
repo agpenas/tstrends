@@ -2,7 +2,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-<p align="center"><img src="images/example_labelling2.png" width="800" height="250"/></p>
+<p align="center"><img src="images/example_labelling2.png" width="600" height="150"/></p>
 
 ## Introduction
 
