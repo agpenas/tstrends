@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Type, Union
+from typing import Optional, Type, Union
 from bayes_opt import BayesianOptimization
 from bayes_opt import acquisition
 
