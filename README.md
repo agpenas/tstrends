@@ -1,5 +1,5 @@
 # Python Trend Labeller
-[![Python Version](https://img.shields.io/badge/python-3.10 | 3.11 | 3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![Codecov](https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller)
 
