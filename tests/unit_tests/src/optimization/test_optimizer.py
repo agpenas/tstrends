@@ -1,10 +1,12 @@
-import pytest
 from typing import Type
+
 import numpy as np
+import pytest
 from bayes_opt import acquisition
+
 from optimization import Optimizer
-from trend_labelling import BinaryCTL, TernaryCTL
 from returns_estimation.returns_estimation import BaseReturnEstimator
+from trend_labelling import BinaryCTL, TernaryCTL
 
 
 class MockReturnEstimator(BaseReturnEstimator):

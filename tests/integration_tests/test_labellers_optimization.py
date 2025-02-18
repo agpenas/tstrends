@@ -1,19 +1,16 @@
 """Integration tests for trend labeller optimization and labelling."""
 
-import pytest
-import numpy as np
 import json
 from pathlib import Path
-from optimization import Optimizer, OptimizationBounds
-from trend_labelling import (
-    BinaryCTL,
-    TernaryCTL,
-    OracleBinaryTrendLabeller,
-    OracleTernaryTrendLabeller,
-)
-from returns_estimation.returns_estimation import ReturnsEstimatorWithFees
-from returns_estimation.fees_config import FeesConfig
 
+import numpy as np
+import pytest
+
+from optimization import OptimizationBounds, Optimizer
+from returns_estimation.fees_config import FeesConfig
+from returns_estimation.returns_estimation import ReturnsEstimatorWithFees
+from trend_labelling import (BinaryCTL, OracleBinaryTrendLabeller,
+                             OracleTernaryTrendLabeller, TernaryCTL)
 
 # Constants for floating point comparisons
 PARAM_RTOL = 1e-5  # Relative tolerance for parameter comparisons

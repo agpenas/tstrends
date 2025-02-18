@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
 import math
-from typing import List, Union, TypeVar
+from abc import ABC, abstractmethod
+from typing import List, TypeVar, Union
+
 from .label_scaling import Labels
 
 T = TypeVar("T", list[int], list[Labels])

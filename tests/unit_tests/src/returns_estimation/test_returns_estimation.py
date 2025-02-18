@@ -1,9 +1,8 @@
 import pytest
-from returns_estimation.returns_estimation import (
-    SimpleReturnEstimator,
-    ReturnsEstimatorWithFees,
-)
+
 from returns_estimation.fees_config import FeesConfig
+from returns_estimation.returns_estimation import (ReturnsEstimatorWithFees,
+                                                   SimpleReturnEstimator)
 
 
 @pytest.fixture

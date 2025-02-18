@@ -1,6 +1,8 @@
 from typing import Callable, List, Union
+
 import numpy as np
 from numpy.typing import NDArray
+
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, scale_binary, scale_ternary
 

@@ -1,15 +1,11 @@
 """Tests for label scaling functions."""
 
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_array_equal
-from trend_labelling.label_scaling import (
-    Labels,
-    scale_binary,
-    scale_ternary,
-    BINARY_MAP,
-    TERNARY_MAP,
-)
+
+from trend_labelling.label_scaling import (BINARY_MAP, TERNARY_MAP, Labels,
+                                           scale_binary, scale_ternary)
 
 
 class TestBinaryScaling:

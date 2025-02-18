@@ -1,4 +1,5 @@
 from typing import List, Union
+
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, extract_label_values
 

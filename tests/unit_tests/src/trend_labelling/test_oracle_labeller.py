@@ -1,10 +1,9 @@
-import pytest
 import numpy as np
-from trend_labelling.oracle_labeller import (
-    OracleBinaryTrendLabeller,
-    OracleTernaryTrendLabeller,
-)
+import pytest
+
 from trend_labelling.label_scaling import Labels
+from trend_labelling.oracle_labeller import (OracleBinaryTrendLabeller,
+                                             OracleTernaryTrendLabeller)
 
 
 @pytest.fixture

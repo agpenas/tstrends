@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 from trend_labelling.binary_CTL import BinaryCTL
 from trend_labelling.label_scaling import Labels
 

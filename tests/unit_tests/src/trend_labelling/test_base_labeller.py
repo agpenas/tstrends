@@ -1,7 +1,8 @@
 import numpy as np
+import pytest
+
 from trend_labelling.base_labeller import BaseLabeller
 from trend_labelling.label_scaling import Labels
-import pytest
 
 
 class ConcreteLabeller(BaseLabeller):

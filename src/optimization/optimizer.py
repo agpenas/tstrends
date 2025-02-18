@@ -1,11 +1,11 @@
 from typing import Optional, Type, Union
-from bayes_opt import BayesianOptimization
-from bayes_opt import acquisition
 
+from bayes_opt import BayesianOptimization, acquisition
 
-from .optimization_bounds import OptimizationBounds
 from returns_estimation.returns_estimation import BaseReturnEstimator
 from trend_labelling import BaseLabeller
+
+from .optimization_bounds import OptimizationBounds
 
 # Constants for parameter types
 INTEGER_PARAMS = ["window_size"]

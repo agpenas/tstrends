@@ -1,6 +1,7 @@
 """Label scaling utilities for trend labelling."""
 
 from enum import IntEnum
+
 import numpy as np
 from numpy.typing import NDArray
 

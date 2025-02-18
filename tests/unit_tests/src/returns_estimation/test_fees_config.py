@@ -1,4 +1,5 @@
 import pytest
+
 from returns_estimation.fees_config import FeesConfig
 
 
