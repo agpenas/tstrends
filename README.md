@@ -1,6 +1,7 @@
 # Python Trend Labeller
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10 | 3.11 | 3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![Codecov](https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller)
 
 <p align="center"><img src="images/example_labelling2.png" width="600" height="150"/></p>
 
