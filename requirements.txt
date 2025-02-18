@@ -1,2 +1,3 @@
 numpy
 matplotlib
+bayesian-optimization>=2.0.0

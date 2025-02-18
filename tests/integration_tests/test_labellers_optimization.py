@@ -6,10 +6,12 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from optimization import OptimizationBounds, Optimizer
-from returns_estimation.fees_config import FeesConfig
-from returns_estimation.returns_estimation import ReturnsEstimatorWithFees
-from trend_labelling import (
+from time_series_trends.optimization import OptimizationBounds, Optimizer
+from time_series_trends.returns_estimation.fees_config import FeesConfig
+from time_series_trends.returns_estimation.returns_estimation import (
+    ReturnsEstimatorWithFees,
+)
+from time_series_trends.trend_labelling import (
     BinaryCTL,
     OracleBinaryTrendLabeller,
     OracleTernaryTrendLabeller,

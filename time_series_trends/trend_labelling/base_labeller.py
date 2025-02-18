@@ -1,6 +1,6 @@
 import math
 from abc import ABC, abstractmethod
-from typing import List, TypeVar, Union
+from typing import TypeVar
 
 from .label_scaling import Labels
 

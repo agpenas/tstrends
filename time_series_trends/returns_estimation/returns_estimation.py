@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 from collections import Counter
-from dataclasses import dataclass
-from typing import Union
 
 from .fees_config import FeesConfig
 

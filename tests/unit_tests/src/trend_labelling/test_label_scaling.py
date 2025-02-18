@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from trend_labelling.label_scaling import (
+from time_series_trends.trend_labelling.label_scaling import (
     BINARY_MAP,
     TERNARY_MAP,
     Labels,
