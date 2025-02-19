@@ -1,43 +1,44 @@
-# Python Trend Labeller
-[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
-[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-![Codecov](https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller)
+<p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/example_labelling2.png" width="600" height="150"/></p>
 
-<p align="center"><img src="images/example_labelling2.png" width="600" height="150"/></p>
+<p align="center">
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg" alt="Python Version"></a>
+  <img src="https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller" alt="Codecov">
+  <a href="https://github.com/agpenas/python-trend-labeller/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>
+  <a href="https://github.com/agpenas/python-trend-labeller/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-green.svg" alt="License"></a>
+</p>
 
-## Introduction
+## Overview
 
-A robust Python package for automated trend labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](#books-bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
+A robust Python package for automated trend labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
 - <ins>**Two-state**</ins> (upwards/downwards) and <ins>**three-state**</ins> (upwards/neutral/downwards) trend labelling algorithms.
 - Returns estimation with transaction costs and holding fees.
 - Bayesian parameter optimization to select the optimal labelling (powered by [bayesian-optimization](https://github.com/bayesian-optimization/BayesianOptimization)).
 
 
+## 📜 Table of Contents
+- [Features](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#sparkles-features)
+- [Installation](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#installation)
+- [Quick Start](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#quick-start)
+- [Core Components](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#core-components)
+  - [A) Trend Labellers](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#a-trend-labellers)
+  - [B) Returns Estimation](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#b-returns-estimation)
+  - [C) Parameter Optimization](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#parameter-optimization)
+- [Usage Examples](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#usage-examples)
+- [Roadmap](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#roadmap)
+- [Contributing](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#contributing)
+- [Bibliography](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography)
+- [License](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#license)
 
-## :scroll: Table of Contents
-- [Features](#sparkles-features)
-- [Installation](#hammer_and_wrench-installation)
-- [Quick Start](#rocket-quick-start)
-- [Core Components](#nut_and_bolt-core-components)
-  - [A) Trend Labellers](#a-trend-labellers)
-  - [B) Returns Estimation](#b-returns-estimation)
-  - [C) Parameter Optimization](#c-parameter-optimization)
-- [Usage Examples](#usage-examples)
-- [Roadmap](#construction-roadmap)
-- [Contributing](#handshake-contributing)
-- [Bibliography](#books-bibliography)
-- [License](#scroll-license)
 
-
-## :sparkles: Features
+## ✨ Features
 
 ### Trend Labelling Approaches
 - **Continuous Trend Labelling (CTL)**:
-  - Binary CTL (Up/Down trends) - Based on [Wu et al.](#books-bibliography)
-  - Ternary CTL (Up/Neutral/Down trends) - Inspired by [Dezhkam et al.](#books-bibliography)
+  - Binary CTL (Up/Down trends) - Based on [Wu et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography)
+  - Ternary CTL (Up/Neutral/Down trends) - Inspired by [Dezhkam et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography)
 - **Oracle Labelling**
-  - Binary Oracle (optimizes for maximum returns) - Based on [Kovačević et al.](#books-bibliography)
-  - Ternary Oracle (includes neutral state optimization) 
+  - Binary Oracle (optimizes for maximum returns) - Based on [Kovačević et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography)
+  - Ternary Oracle (includes neutral state optimization) - Extension of the binary oracle labeller to include a neutral state.
 
 ### Returns Estimation
 - Simple returns calculation
@@ -52,18 +53,18 @@ A robust Python package for automated trend labelling in time series data with a
 - Empirically tested and customizable parameter bounds
 
 
-## :hammer_and_wrench: Installation
+## 🔧 Installation
 
 ```bash
-pip install python-trend-labeller
+pip install tstrends
 ```
 
-## :rocket: Quick Start
+## 🚀 Quick Start
 
 ```python
-from trend_labelling import BinaryCTL
-from returns_estimation import SimpleReturnEstimator
-from optimization import Optimizer
+from tstrends.trend_labelling import BinaryCTL
+from tstrends.returns_estimation import SimpleReturnEstimator
+from tstrends.parameter_optimization import Optimizer
 
 # Sample price data
 prices = [100.0, 102.0, 105.0, 103.0, 98.0, 97.0, 99.0, 102.0, 104.0]
@@ -92,36 +93,36 @@ optimal_labeller = BinaryCTL(
 optimal_labels = optimal_labeller.get_labels(prices)
 ```
 
-## :nut_and_bolt: Core Components
+## 🔩 Core Components
 
 ### A) Trend Labellers
 
-See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb) for a detailed example of the trend labellers.
+See the notebook [labellers_catalogue.ipynb](https://github.com/agpenas/python-trend-labeller/blob/main/notebooks/labellers_catalogue.ipynb) for a detailed example of the trend labellers.
 
 #### 1. Labellers based on Continuous Trend Labelling (CTL)
-- **BinaryCTL**: Implements the [Wu et al.](#books-bibliography) algorithm for binary trend labelling. When the market rises above a certain proportion parameter <ins>omega</ins> from the current lowest point or recedes from the current highest point to a certain proportion parameter <ins>omega</ins>, the two segments are labeled as rising and falling segments, respectively. 
+- **BinaryCTL**: Implements the [Wu et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography) algorithm for binary trend labelling. When the market rises above a certain proportion parameter <ins>omega</ins> from the current lowest point or recedes from the current highest point to a certain proportion parameter <ins>omega</ins>, the two segments are labeled as rising and falling segments, respectively. 
   - Parameters:
     - `omega`: Threshold for trend changes (float). Key to manage the sensitivity of the labeller.\
     **For instance, for a value of 0.001, 0.005, 0.01, 0.015, the labeller behaves as follows:**
     
-    <p align="center"><img src="images/binary_ctl_omega_effect.png" alt="Omega effect on binary CTL" width="800"/></p>
+    <p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/binary_ctl_omega_effect.png" alt="Omega effect on binary CTL" width="800"/></p>
 
   
-- **TernaryCTL**: Extends CTL with a neutral state. It introduces a window_size parameter to look for trend confirmation before resetting state to neutral, similar to the second loop in the [Dezhkam et al.](#books-bibliography) algorithm.
+- **TernaryCTL**: Extends CTL with a neutral state. It introduces a window_size parameter to look for trend confirmation before resetting state to neutral, similar to the second loop in the [Dezhkam et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography) algorithm.
   - Parameters:
     - `marginal_change_thres`: Threshold for significant time series movements as a percentage of the current value.
     - `window_size`: Maximum window to look for trend confirmation before resetting state to neutral.\
     **For instance, for different combinations of `marginal_change_thres` and `window_size`, the labeller behaves as follows:**
 
-    <p align="center"><img src="images/ternaryCTL_params_effect.png" alt="Ternary CTL parameters effect" width="800"/></p>
+    <p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/ternaryCTL_params_effect.png" alt="Ternary CTL parameters effect" width="800"/></p>
 
 #### 2. Labellers based on the Oracle Labeller
-- **OracleBinaryTrendLabeller**: Implements the [Kovačević et al.](#books-bibliography) algorithm for binary trend labelling, optimizing labels for maximum returns given a transaction cost parameter. Algorithm complexity is optimized via dynamic programming.
+- **OracleBinaryTrendLabeller**: Implements the [Kovačević et al.](https://github.com/agpenas/python-trend-labeller/tree/main?tab=readme-ov-file#bibliography) algorithm for binary trend labelling, optimizing labels for maximum returns given a transaction cost parameter. Algorithm complexity is optimized via dynamic programming.
   - Parameters:
     - `transaction_cost`: Cost coefficient for position changes.\
     **For instance, for different values of `transaction_cost`, the labeller behaves as follows:**
 
-    <p align="center"><img src="images/oracle_binary_param_effect.png" alt="Oracle binary transaction cost effect" width="800"/></p>
+    <p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/oracle_binary_param_effect.png" alt="Oracle binary transaction cost effect" width="800"/></p>
 
 - **OracleTernaryTrendLabeller**: Extends the binary oracle labeller to include neutral state in optimization. It constrains the switch between upward et downwards trends to go through a neutral state. The reward for staying in a neutral state is managed via a `neutral_reward_factor` parameter.
   - Parameters:
@@ -129,7 +130,7 @@ See the notebook [labellers_catalogue.ipynb](notebooks/labellers_catalogue.ipynb
     - `neutral_reward_factor`: Coefficient for the reward of staying in a neutral state.\
     **For instance, for different values of `neutral_reward_factor`, the labeller behaves as follows:**
 
-    <p align="center"><img src="images/oracle_ternary_params_effect.png" alt="Oracle ternary neutral reward factor effect" width="800"/></p>
+    <p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/oracle_ternary_params_effect.png" alt="Oracle ternary neutral reward factor effect" width="800"/></p>
 
 ### B) Returns Estimation
 
@@ -139,7 +140,7 @@ The package provides flexible returns estimation with transaction costs. It intr
 - **Constant holding fees**, based on the position duration. Useful for ternary labellers to reward the identification of neutral trends.
 
 ```python
-from returns_estimation import ReturnsEstimatorWithFees, FeesConfig
+from tstrends.returns_estimation import ReturnsEstimatorWithFees, FeesConfig
 
 # Configure fees
 fees_config = FeesConfig(
@@ -166,7 +167,9 @@ By definition this is a bounded optimization problem, and some default bounds ar
 - `OracleTernaryTrendLabeller`: `transaction_cost` is bounded between 0 and 0.01, `neutral_reward_factor` is bounded between 0 and 0.1
 
 ```python
-from optimization import Optimizer, OptimizationBounds
+from tstrends.parameter_optimization import Optimizer
+from tstrends.returns_estimation import ReturnsEstimatorWithFees
+from tstrends.trend_labelling import OracleTernaryTrendLabeller
 
 # Create optimizer
 optimizer = Optimizer(
@@ -199,34 +202,30 @@ print(f"Maximum return: {result['target']}")
 > The acquisition function is set to UpperConfidenceBound(kappa=2) by default. This is a good default choice that balances exploration and exploitation, but you may want to experiment with other values for kappa or other acquisition functions like bayes_opt.acquisition.ExpectedImprovement() or bayes_opt.acquisition.ProbabilityOfImprovement() for your specific use case.
 
 > [!CAUTION]
-> The default bounds are presetted for relatively constant time series and may not be optimal for all use cases. It is recommended to test the waters by testing the labels with some parameters at different orders of magnitude before optimizing. See [optimization example notebook](notebooks/optimization_example.ipynb) for a detailed example of parameter optimization.
+> The default bounds are presetted for relatively constant time series and may not be optimal for all use cases. It is recommended to test the waters by testing the labels with some parameters at different orders of magnitude before optimizing. See [optimization example notebook](https://github.com/agpenas/python-trend-labeller/blob/main/notebooks/optimization_example.ipynb) for a detailed example of parameter optimization.
 
-## :construction: Roadmap
+## 🚧 Roadmap
 
 - [ ] Transform labels into trend momentum / potential.
 - [ ] Calculate returns for one subset of labels only.
 - [ ] Always good to explore more labellers.
 
-## :handshake: Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate and adhere to the existing coding style.
 
-## :books: Bibliography
+## 📚 Bibliography
 
 The algorithms implemented in this package are based or inspired by the following academic papers:
 
-[1]: #wu-2021 "Wu et al. (2021)"
-[2]: #dezhkam-2021 "Dezhkam et al. (2021)"
-[3]: #kovacevic-2021 "Kovačević et al. (2021)"
+[1]: Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends".
 
-1. <a name="wu-2021"></a>Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends". *Referenced in BinaryCTL implementation.*
+[2]: Dezhkam, A., Moazeni, S., & Moazeni, S. "A Bayesian-based classification framework for financial time series trend prediction".
 
-2. <a name="dezhkam-2021"></a>Dezhkam, A., Moazeni, S., & Moazeni, S. "A Bayesian-based classification framework for financial time series trend prediction". *Referenced in TernaryCTL implementation.*
+[3]: Kovačević, T., Merćep, A., Begušić, S., & Kostanjčar, Z. "Optimal Trend Labeling in Financial Time Series".
 
-3. <a name="kovacevic-2021"></a>Kovačević, T., Merćep, A., Begušić, S., & Kostanjčar, Z. "Optimal Trend Labeling in Financial Time Series". *Referenced in Oracle Labellers implementation.*
-
-## :scroll: License
+## 📄 License
 
 [BSD-2-Clause](LICENSE)

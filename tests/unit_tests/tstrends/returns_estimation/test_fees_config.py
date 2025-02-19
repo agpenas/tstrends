@@ -1,6 +1,6 @@
 import pytest
 
-from time_series_trends.returns_estimation.fees_config import FeesConfig
+from tstrends.returns_estimation.fees_config import FeesConfig
 
 
 @pytest.fixture
