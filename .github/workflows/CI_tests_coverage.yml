@@ -57,7 +57,7 @@ jobs:
     - name: Test with pytest
       run: |
         source .venv/bin/activate
-        python -m pytest --cov-branch --cov-report=xml --cov --junitxml=junit.xml -o junit_family=legacy
+        pytest --cov-branch --cov-report=xml --cov=tstrends --junitxml=junit.xml -o junit_family=legacy
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
