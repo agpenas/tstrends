@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 from bayes_opt import acquisition
 
-from time_series_trends.optimization import Optimizer
-from time_series_trends.returns_estimation.returns_estimation import BaseReturnEstimator
-from time_series_trends.trend_labelling import BinaryCTL, TernaryCTL
+from tstrends.optimization import Optimizer
+from tstrends.returns_estimation.returns_estimation import BaseReturnEstimator
+from tstrends.trend_labelling import BinaryCTL, TernaryCTL
 
 
 class MockReturnEstimator(BaseReturnEstimator):

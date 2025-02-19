@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from time_series_trends.trend_labelling.binary_CTL import BinaryCTL
-from time_series_trends.trend_labelling.label_scaling import Labels
+from tstrends.trend_labelling.binary_CTL import BinaryCTL
+from tstrends.trend_labelling.label_scaling import Labels
 
 
 @pytest.fixture

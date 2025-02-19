@@ -1,7 +1,7 @@
 import pytest
 
-from time_series_trends.optimization import OptimizationBounds
-from time_series_trends.trend_labelling import (
+from tstrends.optimization import OptimizationBounds
+from tstrends.trend_labelling import (
     BaseLabeller,
     BinaryCTL,
     OracleBinaryTrendLabeller,

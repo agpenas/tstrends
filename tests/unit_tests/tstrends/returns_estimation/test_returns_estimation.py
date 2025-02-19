@@ -1,7 +1,7 @@
 import pytest
 
-from time_series_trends.returns_estimation.fees_config import FeesConfig
-from time_series_trends.returns_estimation.returns_estimation import (
+from tstrends.returns_estimation.fees_config import FeesConfig
+from tstrends.returns_estimation.returns_estimation import (
     ReturnsEstimatorWithFees,
     SimpleReturnEstimator,
 )
