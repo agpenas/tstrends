@@ -12,8 +12,8 @@ class FeesConfig:
     Attributes:
         lp_transaction_fees (float): Transaction fee percentage for long positions
         sp_transaction_fees (float): Transaction fee percentage for short positions
-        lp_holding_fees (float): Daily holding fee percentage for long positions
-        sp_holding_fees (float): Daily holding fee percentage for short positions
+        lp_holding_fees (float): Daily absolute holding fee for long positions
+        sp_holding_fees (float): Daily absolute holding fee for short positions
 
     Example:
         >>> fees_config = FeesConfig(

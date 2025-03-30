@@ -17,11 +17,6 @@ class TernaryCTL(BaseLabeller):
         - Neutral trends (label: Labels.NEUTRAL or 0)
         - Downward trends (label: Labels.DOWN or -1)
 
-    Attributes:
-        marginal_change_thres (float): Threshold for significant price movements as a percentage.
-        window_size (int): Maximum window to look for trend confirmation before resetting state to neutral.
-        labels (list[Labels]): List to store computed trend labels.
-
     Example:
         >>> labeller = TernaryCTL(marginal_change_thres=0.1, window_size=3)
         >>> prices = [1.0, 1.15, 1.2, 1.18, 1.0]
@@ -130,8 +125,8 @@ class TernaryCTL(BaseLabeller):
     def get_labels(
         self, prices: list[float], return_labels_as_int: bool = True
     ) -> Union[list[int], list[Labels]]:
-        """
-        Labels trends in a time series of closing prices using a ternary classification approach.
+        """Labels trends in a time series of closing prices using a ternary classification approach.
+
         The method identifies three distinct states in price movements:
             - Upward trends (label: Labels.UP)
             - Downward trends (label: Labels.DOWN)
@@ -145,14 +140,19 @@ class TernaryCTL(BaseLabeller):
         states when price movements exceed thresholds, while using the window_size parameter
         to avoid getting stuck in prolonged sideways movements.
 
-        Parameters:
-            prices (list[float]): List of closing prices.
-            return_labels_as_int (bool, optional): If True, returns integer labels (-1, 0, 1),
-                                                  if False returns Labels enum values. Defaults to True.
+        Parameters
+        ----------
+        prices : list[float]
+            List of closing prices.
+        return_labels_as_int : bool, optional
+            If True, returns integer labels (-1, 0, 1), if False returns Labels enum values.
+            Defaults to True.
 
-        Returns:
-            Union[list[int], list[Labels]]: List of labels. If return_labels_as_int is True, returns integers (-1, 0, 1),
-                                          otherwise returns Labels enum values.
+        Returns
+        -------
+        Union[list[int], list[Labels]]
+            List of labels. If return_labels_as_int is True, returns integers (-1, 0, 1),
+            otherwise returns Labels enum values.
         """
         self._verify_time_series(prices)
         # Initialize labels

@@ -52,11 +52,6 @@ class BinaryCTL(BaseLabeller):
         - Upward trends (label: Labels.UP or 1)
         - Downward trends (label: Labels.DOWN or -1)
 
-    Attributes:
-        omega (float): The proportion threshold parameter of the trend definition.
-        _state (TrendState): Internal state for trend tracking.
-        _labels (list[Labels]): List to store computed trend labels.
-
     Example:
         >>> labeller = BinaryCTL(omega=0.1)
         >>> prices = [1.0, 1.15, 1.2, 1.0]
@@ -167,17 +162,21 @@ class BinaryCTL(BaseLabeller):
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> Union[list[int], list[Labels]]:
-        """
-        Auto-labels a price time series based on the provided algorithm.
+        """Auto-labels a price time series based on the provided algorithm.
 
-        Parameters:
-        time_series_list (list[float]): The original time series data X = [x1, x2, ..., xN]
-        return_labels_as_int (bool, optional): If True, returns integer labels (-1, 1),
-                                              if False returns Labels enum values. Defaults to True.
+        Parameters
+        ----------
+        time_series_list : list[float]
+            The original time series data X = [x1, x2, ..., xN]
+        return_labels_as_int : bool, optional
+            If True, returns integer labels (-1, 1), if False returns Labels enum values.
+            Defaults to True.
 
-        Returns:
-        Union[list[int], list[Labels]]: The label vector Y. If return_labels_as_int is True, returns integers (-1, 1),
-                                      otherwise returns Labels enum values (Labels.DOWN, Labels.UP).
+        Returns
+        -------
+        Union[list[int], list[Labels]]
+            The label vector Y. If return_labels_as_int is True, returns integers (-1, 1),
+            otherwise returns Labels enum values (Labels.DOWN, Labels.UP).
         """
         self._verify_time_series(time_series_list)
 
