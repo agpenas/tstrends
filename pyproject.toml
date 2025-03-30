@@ -24,7 +24,7 @@ keywords = [
 
 [project.urls]
 repository = "https://github.com/agpenas/tstrends"
-documentation = "https://docs.tstrends.io"
+documentation = "https://tstrends.org"
 
 [tool.poetry]
 version = "0.2.1"
