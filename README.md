@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller" alt="Codecov">
   <a href="https://github.com/agpenas/python-trend-labeller/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>
   <a href="https://github.com/agpenas/python-trend-labeller/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-green.svg" alt="License"></a>
+  <a href="https://docs.tstrends.io/"><img src="https://readthedocs.org/projects/tstrends/badge/?version=latest" alt="Docs"></a>
 </p>
 
 ## Overview
