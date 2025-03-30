@@ -25,7 +25,6 @@ Links
 
 * **GitHub**: `https://github.com/agpenas/tstrends <https://github.com/agpenas/tstrends>`_
 * **PyPI**: `https://pypi.org/project/tstrends <https://pypi.org/project/tstrends>`_
-* **Documentation**: `https://tstrends.xyz <https://tstrends.xyz>`_
 
 Requirements
 ---------------------
