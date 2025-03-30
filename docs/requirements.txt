@@ -8,4 +8,5 @@ ipython>=8.0.0
 matplotlib>=3.0.0
 numpy>=1.0.0
 pandas>=2.0.0
-bayesian-optimization>=1.0.0 
+bayesian-optimization>=1.0.0
+sphinx-sitemap 

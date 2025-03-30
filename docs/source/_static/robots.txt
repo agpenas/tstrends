@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Disallow utility pages and generated content
+Disallow: /search.html
+Disallow: /genindex.html
+Disallow: /py-modindex.html
+Disallow: /_modules/
+Disallow: /_sources/
+Disallow: /_static/
+Disallow: /_images/
+
+# Sitemap
+Sitemap: https://tstrends.xyz/sitemap.xml 

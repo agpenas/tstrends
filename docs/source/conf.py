@@ -26,6 +26,7 @@ extensions = [
     "sphinx.ext.viewcode",  # Add links to highlighted source code
     "sphinx.ext.intersphinx",  # Link to other project's documentation
     "nbsphinx",  # Jupyter notebook integration
+    "sphinx_sitemap",  # Generate sitemap.xml
 ]
 
 # Set up IPython lexer for code highlighting
@@ -92,6 +93,23 @@ sys.path.insert(0, notebooks_path)
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+
+# Copy robots.txt to the output directory
+html_extra_path = ["_static/robots.txt"]
+
+# Sitemap configuration
+html_baseurl = "https://tstrends.xyz/"
+sitemap_filename = "sitemap.xml"
+sitemap_url_scheme = "{link}"
+# Exclude pages that shouldn't be indexed
+sitemap_exclude = [
+    "search.html",
+    "genindex.html",
+    "py-modindex.html",
+    "_modules/index.html",
+    "_modules/*",  # Exclude all module source pages
+    "_sources/*",  # Exclude source files
+]
 
 # Theme options for controlling the sidebar and navigation
 html_theme_options = {

@@ -20,6 +20,12 @@ Features
 * **Optimizing the labelling**: Parameter optimization using Bayesian optimization
 * **Visualization utilities**: For visual inspection of the labelling results
 
+Links
+----------------
+
+* **GitHub**: `https://github.com/agpenas/tstrends <https://github.com/agpenas/tstrends>`_
+* **PyPI**: `https://pypi.org/project/tstrends <https://pypi.org/project/tstrends>`_
+
 Requirements
 ---------------------
 
