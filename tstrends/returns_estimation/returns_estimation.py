@@ -125,22 +125,22 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
     either by identifying ultrashort term trends or overextending trends over neutral periods.
 
     Transaction Fees:
-    - Long Position (lp) Transaction Fees: Applied when introducing a positive (upward trend) label
-    - Short Position (sp) Transaction Fees: Applied when introducing a negative (downward trend) label
+        - Long Position (lp) Transaction Fees: Applied when introducing a positive (upward trend) label
+        - Short Position (sp) Transaction Fees: Applied when introducing a negative (downward trend) label
 
     Holding Fees:
-    - Long Position (lp) Holding Fees: Ongoing fees charged for maintaining a positive (upward trend) label
-    - Short Position (sp) Holding Fees: Ongoing fees charged for maintaining a negative (downward trend) label
+        - Long Position (lp) Holding Fees: Ongoing fees charged for maintaining a positive (upward trend) label
+        - Short Position (sp) Holding Fees: Ongoing fees charged for maintaining a negative (downward trend) label
 
     All fees are expressed as percentages of the position value.
 
-    Attributes:
-        fees_config (FeesConfig): Configuration for transaction and holding fees
-
-        The return calculation will:
+    The return calculation will:
         1. Include the basic price movement returns
         2. Subtract transaction fees when positions change
         3. Subtract daily holding fees based on position type
+
+    Attributes:
+        fees_config (FeesConfig): Configuration for transaction and holding fees
     """
 
     def __init__(self, fees_config: FeesConfig | None = None):

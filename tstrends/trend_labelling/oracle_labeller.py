@@ -232,8 +232,8 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
 
     Note:
         The neutral_reward_factor parameter influences how the algorithm weights price changes
-        in the neutral state.
-        The neutral_reward_factor is usually best set lower then 1.0, tuned up together with the transaction_cost.
+        in the neutral state. The neutral_reward_factor is usually best set lower than 1.0,
+        tuned up together with the transaction_cost.
     """
 
     def __init__(self, transaction_cost: float, neutral_reward_factor: float) -> None:

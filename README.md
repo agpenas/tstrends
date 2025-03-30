@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller" alt="Codecov">
   <a href="https://github.com/agpenas/python-trend-labeller/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>
   <a href="https://github.com/agpenas/python-trend-labeller/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-green.svg" alt="License"></a>
+  <a href="https://docs.tstrends.io/"><img src="https://readthedocs.org/projects/tstrends/badge/?version=latest" alt="Docs"></a>
 </p>
 
 ## Overview
@@ -220,11 +221,11 @@ Please make sure to update tests as appropriate and adhere to the existing codin
 
 The algorithms implemented in this package are based or inspired by the following academic papers:
 
-[1]: Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. "A Labeling Method for Financial Time Series Prediction Based on Trends".
+[1]: Wu, D., Wang, X., Su, J., Tang, B., & Wu, S. (2020). A Labeling Method for Financial Time Series Prediction Based on Trends. Entropy, 22(10), 1162. https://doi.org/10.3390/e22101162
 
-[2]: Dezhkam, A., Moazeni, S., & Moazeni, S. "A Bayesian-based classification framework for financial time series trend prediction".
+[2]: Dezhkam, A., Manzuri, M. T., Aghapour, A., Karimi, A., Rabiee, A., & Shalmani, S. M. (2023). A Bayesian-based classification framework for financial time series trend prediction. The Journal of supercomputing, 79(4), 4622–4659. https://doi.org/10.1007/s11227-022-04834-4
 
-[3]: Kovačević, T., Merćep, A., Begušić, S., & Kostanjčar, Z. "Optimal Trend Labeling in Financial Time Series".
+[3]: Kovačević, Tomislav & Merćep, Andro & Begušić, Stjepan & Kostanjcar, Zvonko. (2023). Optimal Trend Labeling in Financial Time Series. IEEE Access. PP. 1-1. 10.1109/ACCESS.2023.3303283. 
 
 ## 📄 License
 
