@@ -6,6 +6,7 @@
   <a href="https://github.com/agpenas/tstrends/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>
   <a href="https://github.com/agpenas/tstrends/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-green.svg" alt="License"></a>
   <a href="https://tstrends.xyz/"><img src="https://readthedocs.org/projects/tstrends/badge/?version=latest" alt="Docs"></a>
+
 </p>
 
 ## Overview

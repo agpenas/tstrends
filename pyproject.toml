@@ -26,6 +26,7 @@ keywords = [
 repository = "https://github.com/agpenas/tstrends"
 documentation = "https://tstrends.xyz"
 
+
 [tool.poetry]
 version = "0.2.1"
 classifiers = [
