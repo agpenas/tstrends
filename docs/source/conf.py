@@ -94,15 +94,23 @@ sys.path.insert(0, notebooks_path)
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
+# Disable the Python module index
+html_domain_indices = (
+    []
+)  # Empty list disables all domain-specific indices, including the Python Module Index
+html_use_modindex = False  # Explicitly disable the module index
+html_use_index = False  # Explicitly disable the index
+
 # Copy robots.txt to the output directory
 html_extra_path = ["_static/robots.txt"]
 
 # Sitemap configuration
-html_baseurl = "https://tstrends.xyz/"
+html_baseurl = "https://tstrends.xyz/en/latest/"
 sitemap_filename = "sitemap.xml"
 sitemap_url_scheme = "{link}"
+sitemap_locales = [None]
 # Exclude pages that shouldn't be indexed
-sitemap_exclude = [
+sitemap_excludes = [
     "search.html",
     "genindex.html",
     "py-modindex.html",
