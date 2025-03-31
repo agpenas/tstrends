@@ -104,10 +104,3 @@ The algorithms implemented in this package are based on or inspired by the follo
    The basis for our Oracle Binary and Ternary Trend Labellers.
 
 For a more comprehensive bibliography with detailed descriptions, see the :doc:`bibliography` page.
-
-Indices and tables
-============================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
