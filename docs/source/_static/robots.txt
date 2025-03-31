@@ -12,3 +12,4 @@ Disallow: /_images/
 
 # Sitemap
 Sitemap: https://tstrends.xyz/en/latest/sitemap.xml 
+

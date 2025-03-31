@@ -94,6 +94,7 @@ sys.path.insert(0, notebooks_path)
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
+
 # Disable the Python module index
 html_domain_indices = (
     []
