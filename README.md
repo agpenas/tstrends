@@ -11,25 +11,25 @@
 
 ## Overview
 
-A robust Python package for automated trend labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
+A robust Python package for automated trend detection and labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
 - <ins>**Two-state**</ins> (upwards/downwards) and <ins>**three-state**</ins> (upwards/neutral/downwards) trend labelling algorithms.
 - Returns estimation with transaction costs and holding fees.
 - Bayesian parameter optimization to select the optimal labelling (powered by [bayesian-optimization](https://github.com/bayesian-optimization/BayesianOptimization)).
 
 
 ## 📜 Table of Contents
-- [Features](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#sparkles-features)
-- [Installation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#installation)
-- [Quick Start](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#quick-start)
-- [Core Components](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#core-components)
+- [Features](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-features)
+- [Installation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-installation)
+- [Quick Start](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-quick-start)
+- [Core Components](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-core-components)
   - [A) Trend Labellers](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#a-trend-labellers)
   - [B) Returns Estimation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#b-returns-estimation)
-  - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#parameter-optimization)
-- [Usage Examples](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#usage-examples)
-- [Roadmap](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#roadmap)
-- [Contributing](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#contributing)
-- [Bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography)
-- [License](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#license)
+  - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#c-parameter-optimization)
+- [Usage Examples](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-usage-examples)
+- [Roadmap](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-roadmap)
+- [Contributing](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-contributing)
+- [Bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-bibliography)
+- [License](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#-license)
 
 
 ## ✨ Features
@@ -101,7 +101,7 @@ optimal_labels = optimal_labeller.get_labels(prices)
 
 See the notebook [labellers_catalogue.ipynb](https://github.com/agpenas/tstrends/blob/main/notebooks/labellers_catalogue.ipynb) for a detailed example of the trend labellers.
 
-#### 1. Labellers based on Continuous Trend Labelling (CTL)
+#### A-1. Labellers based on Continuous Trend Labelling (CTL)
 - **BinaryCTL**: Implements the [Wu et al.](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography) algorithm for binary trend labelling. When the market rises above a certain proportion parameter <ins>omega</ins> from the current lowest point or recedes from the current highest point to a certain proportion parameter <ins>omega</ins>, the two segments are labeled as rising and falling segments, respectively. 
   - Parameters:
     - `omega`: Threshold for trend changes (float). Key to manage the sensitivity of the labeller.\
@@ -118,7 +118,7 @@ See the notebook [labellers_catalogue.ipynb](https://github.com/agpenas/tstrends
 
     <p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/ternaryCTL_params_effect.png" alt="Ternary CTL parameters effect" width="800"/></p>
 
-#### 2. Labellers based on the Oracle Labeller
+#### A-2. Labellers based on the Oracle Labeller
 - **OracleBinaryTrendLabeller**: Implements the [Kovačević et al.](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography) algorithm for binary trend labelling, optimizing labels for maximum returns given a transaction cost parameter. Algorithm complexity is optimized via dynamic programming.
   - Parameters:
     - `transaction_cost`: Cost coefficient for position changes.\
@@ -226,7 +226,7 @@ The algorithms implemented in this package are based or inspired by the followin
 
 [2]: Dezhkam, A., Manzuri, M. T., Aghapour, A., Karimi, A., Rabiee, A., & Shalmani, S. M. (2023). A Bayesian-based classification framework for financial time series trend prediction. The Journal of supercomputing, 79(4), 4622–4659. https://doi.org/10.1007/s11227-022-04834-4
 
-[3]: Kovačević, Tomislav & Merćep, Andro & Begušić, Stjepan & Kostanjcar, Zvonko. (2023). Optimal Trend Labeling in Financial Time Series. IEEE Access. PP. 1-1. 10.1109/ACCESS.2023.3303283. 
+[3]: Kovačević, Tomislav & Merćep, Andro & Begušić, Stjepan & Kostanjcar, Zvonko. (2023). Optimal Trend Labeling in Financial Time Series. IEEE Access. PP. 1-1. https://doi.org/10.1109/ACCESS.2023.3303283. 
 
 ## 📄 License
 

@@ -6,7 +6,7 @@
 TStrends Documentation
 ===========================
 
-TStrends is a Python package for automated trend labelling in time series data. The philosophy behind it is to make available in Python the state of the art in automatic trend labelling (check the :doc:`bibliography` for more details).
+TStrends is a Python package for automated trend detection andlabelling in time series data, aiming to make easily available the state of the art in automatic trend labelling in Python (check the :doc:`bibliography` for more details).
 It provides various approaches for identifying trends, estimating returns, and optimizing parameters.
 
 Features
