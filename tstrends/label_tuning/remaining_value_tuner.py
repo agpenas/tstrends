@@ -6,9 +6,10 @@ the remaining value change until the end of a continuous trend interval.
 """
 
 from itertools import pairwise
+from typing import Optional
 import numpy as np
 
-from tstrends.label_tuning.base_tuner import BaseLabelTuner
+from tstrends.label_tuning.base import BaseLabelTuner, BaseSmoother
 
 
 class RemainingValueTuner(BaseLabelTuner):
@@ -35,6 +36,7 @@ class RemainingValueTuner(BaseLabelTuner):
         enforce_monotonicity: bool = False,
         normalize_over_interval: bool = False,
         shift_periods: int = 0,
+        smoother: Optional[BaseSmoother] = None,
     ) -> list[float]:
         """
         Tune trend labels to provide information about remaining value change.
@@ -49,7 +51,7 @@ class RemainingValueTuner(BaseLabelTuner):
             enforce_monotonicity (bool, optional): If True, the labels in each interval will not reverse on uncaptured countertrends.
             normalize_over_interval (bool, optional): If True, the remaining value change will be normalized over the interval.
             shift_periods (int, optional): The number of periods to shift the labels forward (if positive) or backward (if negative).
-
+            smoother (Optional[BaseSmoother], optional): The smoother to use to smooth the remaining value change.
         Returns:
             list[float]: Enhanced labels with information about remaining value change:
                        - For uptrends (1): positive values indicating remaining uplift
@@ -66,11 +68,15 @@ class RemainingValueTuner(BaseLabelTuner):
         result = np.zeros(len(time_series))
 
         for start, end in intervals:
-            if labels_array[end] == 0:
+            if labels_array[start] == 0:
                 continue
 
             interval_slice = slice(start, end)
-            end_value = ts_array[end]
+            extremme_value = (
+                max(ts_array[start:end])
+                if labels_array[start] == 1
+                else min(ts_array[start:end])
+            )
 
             if enforce_monotonicity:
                 cum_func = (
@@ -82,7 +88,7 @@ class RemainingValueTuner(BaseLabelTuner):
             else:
                 reference_values = ts_array[interval_slice]
 
-            interval_values = end_value - reference_values
+            interval_values = extremme_value - reference_values
 
             if normalize_over_interval:
                 interval_values = self._normalize_values(interval_values)
@@ -95,6 +101,9 @@ class RemainingValueTuner(BaseLabelTuner):
             result[:shift_periods] = 0
         elif shift_periods < 0:
             result[-shift_periods:] = 0
+
+        if smoother:
+            result = smoother.smooth(result)
 
         return result.tolist()
 
@@ -116,7 +125,7 @@ class RemainingValueTuner(BaseLabelTuner):
             i + 1 for i in range(len(labels) - 1) if labels[i] != labels[i + 1]
         )
 
-        return change_indices
+        return change_indices + [len(labels) - 1]
 
     def _normalize_values(self, values: np.ndarray) -> np.ndarray:
         """
