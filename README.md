@@ -1,4 +1,7 @@
-<p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/example_labelling2.png" width="600" height="150"/></p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/example_labelling2.png" width="400" height="100"/>
+  <img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/tuned_labels.png" width="400" height="100"/>
+</p>
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg" alt="Python Version"></a>
