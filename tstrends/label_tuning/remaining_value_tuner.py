@@ -73,15 +73,15 @@ class RemainingValueTuner(BaseLabelTuner):
 
             interval_slice = slice(start, end)
             extremme_value = (
-                max(ts_array[start:end])
+                max(ts_array[start : end + 1])
                 if labels_array[start] == 1
-                else min(ts_array[start:end])
+                else min(ts_array[start : end + 1])
             )
 
             if enforce_monotonicity:
                 cum_func = (
                     np.minimum.accumulate
-                    if labels_array[end] == -1
+                    if labels_array[end - 1] == -1
                     else np.maximum.accumulate
                 )
                 reference_values = cum_func(ts_array[interval_slice])
@@ -89,18 +89,22 @@ class RemainingValueTuner(BaseLabelTuner):
                 reference_values = ts_array[interval_slice]
 
             interval_values = extremme_value - reference_values
-
             if normalize_over_interval:
                 interval_values = self._normalize_values(interval_values)
 
             result[interval_slice] = interval_values
 
-        # Roll and pad with zeros if necessary
-        result = np.roll(result, shift_periods)
-        if shift_periods > 0:
-            result[:shift_periods] = 0
-        elif shift_periods < 0:
-            result[-shift_periods:] = 0
+        # Shift the result if needed
+        if shift_periods:
+
+            shifted = np.zeros_like(result)
+
+            if shift_periods > 0:
+                shifted[shift_periods:] = result[:-shift_periods]
+            else:
+                shifted[:shift_periods] = result[-shift_periods:]
+
+            result = shifted
 
         if smoother:
             result = smoother.smooth(result)

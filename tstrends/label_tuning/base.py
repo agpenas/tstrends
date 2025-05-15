@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
 
 import numpy as np
-from numpy.typing import NDArray
 
 from tstrends.label_tuning.smoothing_direction import Direction
-
-T = TypeVar("T", list[float], list[int], NDArray)
 
 
 class BaseLabelTuner(ABC):
@@ -53,7 +49,9 @@ class BaseLabelTuner(ABC):
             raise ValueError("time_series and labels must have the same length.")
 
     @abstractmethod
-    def tune(self, time_series: list[float], labels: list[int], **kwargs) -> T:
+    def tune(
+        self, time_series: list[float], labels: list[int], **kwargs
+    ) -> list[float]:
         """
         Tune trend labels to provide more information about trend magnitude.
 
@@ -62,8 +60,7 @@ class BaseLabelTuner(ABC):
             labels (list[int]): The original trend labels (-1, 1) or (-1, 0, 1).
 
         Returns:
-            T: Enhanced labels with additional information about trend magnitude.
-               The exact format depends on the specific implementation.
+            list[float]: Enhanced labels with additional information about trend magnitude.
         """
         pass
 
@@ -90,12 +87,13 @@ class BaseSmoother(ABC):
 
         Raises:
             ValueError: If window_size < 2 or direction is invalid.
+            TypeError: If direction is not a string or Direction enum.
         """
         if not isinstance(window_size, int) or window_size < 2:
             raise ValueError("window_size must be a positive integer >= 2")
         self.window_size = window_size
 
-        # Convert string direction to enum if needed
+        # Validate direction type and value
         if isinstance(direction, str):
             try:
                 self.direction = Direction(direction)
@@ -103,8 +101,10 @@ class BaseSmoother(ABC):
                 raise ValueError(
                     f"direction must be one of {[d.value for d in Direction]}"
                 )
-        else:
+        elif isinstance(direction, Direction):
             self.direction = direction
+        else:
+            raise TypeError("direction must be a string or Direction enum")
 
     @abstractmethod
     def smooth(self, values: list[float]) -> np.ndarray:

@@ -6,7 +6,7 @@ information about the potential trend magnitude or remaining potential until
 the next trend change.
 """
 
-from tstrends.label_tuning.base_tuner import BaseLabelTuner
+from tstrends.label_tuning.base import BaseLabelTuner
 from tstrends.label_tuning.remaining_value_tuner import RemainingValueTuner
 
 __all__ = ["BaseLabelTuner", "RemainingValueTuner"]

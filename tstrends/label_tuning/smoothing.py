@@ -38,6 +38,7 @@ class SimpleMovingAverage(BaseSmoother):
 
         if self.direction == Direction.LEFT:
             # Left-sided (causal) moving average
+            # Note: np.convolve flips the window, so we don't need to flip it ourselves
             smoothed = np.convolve(array, window, mode="full")[-len(array) :]
             return smoothed
 
@@ -74,18 +75,31 @@ class LinearWeightedAverage(BaseSmoother):
     def smooth(self, values: list[float]) -> np.ndarray:
         array = np.asarray(values)
 
+        # Pad array with repeated first and last values
+        padded_array = np.concatenate(
+            [
+                np.repeat(array[0], self.window_size),
+                array,
+                np.repeat(array[-1], self.window_size),
+            ]
+        )
+
         if self.direction == Direction.LEFT:
             # Linear weights increasing toward most recent value
-            weights = np.arange(1, self.window_size + 1)
+            # Note: np.convolve flips the window, so we need to flip our weights
+            # to get the desired effect (more weight on recent values)
+            weights = np.arange(self.window_size, 0, -1)
             weights = weights / weights.sum()
 
-            # Apply convolution and align with original array
-            smoothed = np.convolve(array, weights, mode="full")[-len(array) :]
+            # Apply convolution and take only the portion corresponding to original array
+            smoothed = np.convolve(padded_array, weights, mode="full")
+            smoothed = smoothed[-len(array) - self.window_size : -self.window_size]
             return smoothed
 
         # Triangular weights centered on each point
         weights = signal.windows.triang(self.window_size)
         weights = weights / weights.sum()
-        smoothed = np.convolve(array, weights, mode="same")
+        smoothed = np.convolve(padded_array, weights, mode="same")
+        smoothed = smoothed[self.window_size : self.window_size + len(array)]
 
         return smoothed
