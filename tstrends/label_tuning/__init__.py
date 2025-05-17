@@ -8,5 +8,12 @@ the next trend change.
 
 from tstrends.label_tuning.base import BaseLabelTuner
 from tstrends.label_tuning.remaining_value_tuner import RemainingValueTuner
+from tstrends.label_tuning.smoothing import SimpleMovingAverage, LinearWeightedAverage
+from tstrends.label_tuning.smoothing_direction import Direction
 
-__all__ = ["BaseLabelTuner", "RemainingValueTuner"]
+__all__ = [
+    "RemainingValueTuner",
+    "SimpleMovingAverage",
+    "LinearWeightedAverage",
+    "Direction",
+]
