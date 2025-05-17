@@ -24,7 +24,7 @@ Features
 
 * **Label Tuning**: Transform discrete labels into continuous values expressing trend potential
 
-* **Visualization utilities**: For visual inspection of the labelling results
+* **Visualization utilities**: For visual inspection of trend labels and gradient visualization of tuned labels
 
 Links
 ----------------
