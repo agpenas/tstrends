@@ -18,6 +18,7 @@ A robust Python package for automated trend labelling in time series data with a
 - <ins>**Two-state**</ins> (upwards/downwards) and <ins>**three-state**</ins> (upwards/neutral/downwards) trend labelling algorithms.
 - Returns estimation with transaction costs and holding fees.
 - Bayesian parameter optimization to select the optimal labelling (powered by [bayesian-optimization](https://github.com/bayesian-optimization/BayesianOptimization)).
+- <ins>**Label tuning**</ins> to transform discrete labels into highly customisable continuous values expressing trend potential.
 
 
 ## 📜 Table of Contents
@@ -28,7 +29,7 @@ A robust Python package for automated trend labelling in time series data with a
   - [A) Trend Labellers](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#a-trend-labellers)
   - [B) Returns Estimation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#b-returns-estimation)
   - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#c-parameter-optimization)
-  - [D) Label Tuning](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#d-label-tuning)
+  - [D) Label Tuning](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#d-label-tuning-expressing-trend-potential)
 - [Usage Examples](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#usage-examples)
 - [Roadmap](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#roadmap)
 - [Contributing](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#contributing)
