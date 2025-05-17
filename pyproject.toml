@@ -51,6 +51,7 @@ matplotlib = "^3.10.0"
 bayesian-optimization = "^2.0.3"
 pandas = "^2.2.3"
 numpy = "^2.2.3"
+scipy = "^1.15.0"
 
 [tool.poetry.group.dev]
 optional = true
