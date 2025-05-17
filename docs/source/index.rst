@@ -13,12 +13,17 @@ Features
 ----------------
 
 * **Labelling**: Multiple trend labelling approaches:
+
   * Binary and ternary trend labelling
   * Continuous trend labelling (CTL)
   * Oracle-based labelling
+
 * **Evaluating the labelling**: Returns estimation with transaction costs
+
 * **Optimizing the labelling**: Parameter optimization using Bayesian optimization
+
 * **Label Tuning**: Transform discrete labels into continuous values expressing trend potential
+
 * **Visualization utilities**: For visual inspection of the labelling results
 
 Links
