@@ -18,6 +18,7 @@ Features
   * Oracle-based labelling
 * **Evaluating the labelling**: Returns estimation with transaction costs
 * **Optimizing the labelling**: Parameter optimization using Bayesian optimization
+* **Label Tuning**: Transform discrete labels into continuous values expressing trend potential
 * **Visualization utilities**: For visual inspection of the labelling results
 
 Links
@@ -81,6 +82,7 @@ Contents
    tstrends.visualization
    tstrends.optimization
    tstrends.returns_estimation
+   tstrends.label_tuning
 
 .. toctree::
    :maxdepth: 2
