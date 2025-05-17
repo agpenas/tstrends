@@ -10,3 +10,4 @@ numpy>=1.0.0
 pandas>=2.0.0
 bayesian-optimization>=1.0.0
 sphinx-sitemap 
+scipy>=1.15.0 

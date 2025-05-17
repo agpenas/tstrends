@@ -1,4 +1,7 @@
-<p align="center"><img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/example_labelling2.png" width="600" height="150"/></p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/example_labelling2.png" width="400" height="100"/>
+  <img src="https://raw.githubusercontent.com/agpenas/python-trend-labeller/main/images/tuned_labels.png" width="400" height="100"/>
+</p>
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg" alt="Python Version"></a>
@@ -24,7 +27,8 @@ A robust Python package for automated trend labelling in time series data with a
 - [Core Components](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#core-components)
   - [A) Trend Labellers](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#a-trend-labellers)
   - [B) Returns Estimation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#b-returns-estimation)
-  - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#parameter-optimization)
+  - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#c-parameter-optimization)
+  - [D) Label Tuning](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#d-label-tuning)
 - [Usage Examples](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#usage-examples)
 - [Roadmap](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#roadmap)
 - [Contributing](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#contributing)
@@ -206,9 +210,65 @@ print(f"Maximum return: {result['target']}")
 > [!CAUTION]
 > The default bounds are presetted for relatively constant time series and may not be optimal for all use cases. It is recommended to test the waters by testing the labels with some parameters at different orders of magnitude before optimizing. See [optimization example notebook](https://github.com/agpenas/tstrends/blob/main/notebooks/optimization_example.ipynb) for a detailed example of parameter optimization.
 
+### D) Label Tuning (expressing trend potential)
+
+The label tuning module enhances binary and ternary trend labels by adding trend potential information to make them more useful for training prediction models. It transforms discrete labels (-1, 0, 1) into continuous values that express the potential of the trend at each point.
+
+#### 1. Remaining Value Tuner
+
+The `RemainingValueTuner` transforms labels into continuous values that represent, for each time point, the difference between the current value and the maximum/minimum value reached by the end of the trend. The output values maintain the original label's sign but provide additional information about trend strength:
+
+- For uptrends (1): positive values indicating remaining upside potential
+- For downtrends (-1): negative values indicating remaining downside
+- For neutral trends (0): values close to zero
+
+This approach is particularly valuable in financial applications where:
+- Correctly predicting a trend is most critical at its beginning
+- The impact of a prediction depends on the magnitude of the trend's total price change
+
+Key parameters of the `tune` method:
+- `enforce_monotonicity`: If True, labels in each interval will not reverse on uncaptured countertrends
+- `normalize_over_interval`: If True, the remaining value change will be normalized over each interval
+- `shift_periods`: Number of periods to shift the labels forward (if positive) or backward (if negative)
+- `smoother`: Optional smoother object to smooth the resulting tuned labels (see [Smoothing Options](#2-smoothing-options) below)
+
+```python
+from tstrends.label_tuning import RemainingValueTuner
+from tstrends.label_tuning.smoothing import LinearWeightedAverage
+from tstrends.trend_labelling import OracleTernaryTrendLabeller
+
+# Generate trend labels
+labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
+labels = labeller.get_labels(prices)
+
+# Create a smoother for enhancing the tuned labels (optional)
+smoother = LinearWeightedAverage(window_size=5, direction="left")
+
+# Tune the labels
+tuner = RemainingValueTuner()
+tuned_labels = tuner.tune(
+    time_series=prices,
+    labels=labels,
+    enforce_monotonicity=True,
+    normalize_over_interval=False,
+    smoother=smoother
+)
+```
+
+#### 2. Smoothing Options
+
+The label tuning module provides smoothing classes to enhance the tuned label output:
+
+- `SimpleMovingAverage`: Equal-weight smoothing across the window
+- `LinearWeightedAverage`: Higher weights on more recent values (for left-directed smoothing) or central values (for centered smoothing)
+
+Both smoothers support "left" direction (using only past data) or "centered" direction (using both past and future data).
+
+See the [label tuner example notebook](https://github.com/agpenas/tstrends/blob/main/notebooks/label_tuner_example.ipynb) for a detailed example of label tuning.
+
 ## 🚧 Roadmap
 
-- [ ] Transform labels into trend momentum / potential.
+- [x] Transform labels into trend momentum / potential.
 - [ ] Calculate returns for one subset of labels only.
 - [ ] Always good to explore more labellers.
 

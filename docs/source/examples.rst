@@ -138,6 +138,56 @@ Optimize parameters for a single time series:
        verbose=1
    )
 
+Label Tuning Examples
+--------------------------------
+
+Label tuning transforms discrete trend labels into continuous values that express the potential of the trend at each point.
+
+Remaining Value Tuning
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `RemainingValueTuner` transforms labels based on the difference between the current value and the maximum/minimum value reached by the end of the trend:
+
+.. code-block:: python
+
+   from tstrends.trend_labelling import OracleTernaryTrendLabeller
+   from tstrends.label_tuning import RemainingValueTuner
+   from tstrends.label_tuning.smoothing import LinearWeightedAverage
+
+   # Generate trend labels
+   labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
+   labels = labeller.get_labels(prices)
+
+   # Create a smoother for enhancing the tuned labels (optional)
+   smoother = LinearWeightedAverage(window_size=5, direction="left")
+
+   # Tune the labels
+   tuner = RemainingValueTuner()
+   tuned_labels = tuner.tune(
+       time_series=prices,
+       labels=labels,
+       enforce_monotonicity=True,
+       normalize_over_interval=False,
+       smoother=smoother
+   )
+
+Smoothing Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Apply different smoothing options to the tuned labels:
+
+.. code-block:: python
+
+   from tstrends.label_tuning.smoothing import SimpleMovingAverage, LinearWeightedAverage
+
+   # Simple moving average (equal weights)
+   simple_smoother = SimpleMovingAverage(window_size=5, direction="left")
+   simple_smoothed = simple_smoother.smooth(tuned_labels)
+
+   # Linear weighted average (higher weights on more recent values)
+   weighted_smoother = LinearWeightedAverage(window_size=5, direction="centered")
+   weighted_smoothed = weighted_smoother.smooth(tuned_labels)
+
 Real-World Application
 ---------------------------
 

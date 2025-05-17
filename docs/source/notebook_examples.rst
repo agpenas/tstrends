@@ -39,3 +39,14 @@ This notebook shows how to optimize trend labeller parameters using Bayesian opt
 * **Advanced Topics**: Handling different time series characteristics
 
 :doc:`View the Parameter Optimization Example <notebooks/optimization_example>`
+
+Label Tuning Example
+------------------------------
+
+This notebook demonstrates how to transform discrete trend labels into continuous values expressing trend potential.
+
+* **Content**: Using the RemainingValueTuner to enhance trend labels
+* **Examples**: Configuring different tuning parameters and smoothing options
+* **Advanced Topics**: Visualizing the effect of tuning on prediction models
+
+:doc:`View the Label Tuning Example <notebooks/label_tuner_example>`

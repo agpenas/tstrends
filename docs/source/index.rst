@@ -13,12 +13,18 @@ Features
 ----------------
 
 * **Labelling**: Multiple trend labelling approaches:
+
   * Binary and ternary trend labelling
   * Continuous trend labelling (CTL)
   * Oracle-based labelling
+
 * **Evaluating the labelling**: Returns estimation with transaction costs
+
 * **Optimizing the labelling**: Parameter optimization using Bayesian optimization
-* **Visualization utilities**: For visual inspection of the labelling results
+
+* **Label Tuning**: Transform discrete labels into continuous values expressing trend potential
+
+* **Visualization utilities**: For visual inspection of trend labels and gradient visualization of tuned labels
 
 Links
 ----------------
@@ -81,6 +87,7 @@ Contents
    tstrends.visualization
    tstrends.optimization
    tstrends.returns_estimation
+   tstrends.label_tuning
 
 .. toctree::
    :maxdepth: 2

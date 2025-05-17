@@ -17,8 +17,13 @@ requires-python = ">=3.10"
 keywords = [
     "time series",
     "trend detection",
+    "trend labelling",
+    "downtrend",
+    "uptrend",
+    "quant",
+    "quantitative finance",
     "forecasting",
-    "finantial tools",
+    "financial tools",
     "machine learning"
 ]
 
@@ -28,7 +33,7 @@ documentation = "https://tstrends.xyz"
 
 
 [tool.poetry]
-version = "0.2.1"
+version = "0.3.0"
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
@@ -46,6 +51,7 @@ matplotlib = "^3.10.0"
 bayesian-optimization = "^2.0.3"
 pandas = "^2.2.3"
 numpy = "^2.2.3"
+scipy = "^1.15.0"
 
 [tool.poetry.group.dev]
 optional = true
