@@ -14,13 +14,7 @@ RemainingValueTuner
    :undoc-members:
    :show-inheritance:
 
-BaseLabelTuner
---------------
 
-.. autoclass:: tstrends.label_tuning.BaseLabelTuner
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Smoothing
 ---------
