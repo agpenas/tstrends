@@ -5,8 +5,6 @@ This module provides various smoothing algorithm implementations
 for trend label processing.
 """
 
-from typing import Optional, Union
-
 import numpy as np
 from scipy import signal
 
@@ -29,7 +27,7 @@ class SimpleMovingAverage(BaseSmoother):
     making it good for removing noise but less responsive to recent changes.
     """
 
-    def __init__(self, window_size: int = 3, direction: Union[str, Direction] = "left"):
+    def __init__(self, window_size: int = 3, direction: str | Direction = "left"):
         super().__init__(window_size, direction)
 
     def smooth(self, values: list[float]) -> np.ndarray:
@@ -69,7 +67,7 @@ class LinearWeightedAverage(BaseSmoother):
     - More effective for early trend detection
     """
 
-    def __init__(self, window_size: int = 3, direction: Union[str, Direction] = "left"):
+    def __init__(self, window_size: int = 3, direction: str | Direction = "left"):
         super().__init__(window_size, direction)
 
     def smooth(self, values: list[float]) -> np.ndarray:

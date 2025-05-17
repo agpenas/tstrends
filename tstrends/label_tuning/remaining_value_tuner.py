@@ -6,7 +6,6 @@ the remaining value change until the end of a continuous trend interval.
 """
 
 from itertools import pairwise
-from typing import Optional
 import numpy as np
 
 from tstrends.label_tuning.base import BaseLabelTuner, BaseSmoother
@@ -36,7 +35,7 @@ class RemainingValueTuner(BaseLabelTuner):
         enforce_monotonicity: bool = False,
         normalize_over_interval: bool = False,
         shift_periods: int = 0,
-        smoother: Optional[BaseSmoother] = None,
+        smoother: BaseSmoother | None = None,
     ) -> list[float]:
         """
         Tune trend labels to provide information about remaining value change.
