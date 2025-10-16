@@ -12,6 +12,8 @@
 
 </p>
 
+# TStrends (Time Series Trends): Advanced trend detection and labelling with Python
+
 ## Overview
 
 A robust Python package for automated trend labelling in time series data with a strong financial flavour, implementing SOTA trend labelling algorithms ([bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography)) with returns estimation and parameter bayesian optimization capabilities. Main features:
