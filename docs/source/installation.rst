@@ -4,7 +4,7 @@ Installation
 Requirements
 -----------------------
 
-TStrends requires Python 3.10 or later. The package dependencies are:
+TStrends requires Python 3.10 or later. Tested on Python 3.10–3.14. The package dependencies are:
 
 * numpy
 * pandas

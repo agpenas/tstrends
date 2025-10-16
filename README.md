@@ -4,13 +4,15 @@
 </p>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg" alt="Python Version"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg" alt="Python Version"></a>
   <img src="https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller" alt="Codecov">
   <a href="https://github.com/agpenas/tstrends/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>
   <a href="https://github.com/agpenas/tstrends/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-green.svg" alt="License"></a>
   <a href="https://tstrends.xyz/"><img src="https://readthedocs.org/projects/tstrends/badge/?version=latest" alt="Docs"></a>
 
 </p>
+
+# TStrends (Time Series Trends): Advanced trend detection and labelling with Python
 
 ## Overview
 
