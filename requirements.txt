@@ -3,3 +3,4 @@ bayesian-optimization>=2.0.3
 pandas>=2.2.3
 numpy>=2.2.3
 scipy>=1.16.0 
+pillow>=11.1.0
