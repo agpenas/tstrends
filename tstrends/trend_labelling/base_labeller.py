@@ -1,6 +1,6 @@
 import math
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import TypeVar, overload, Literal
 
 from .label_scaling import Labels
 
@@ -51,6 +51,16 @@ class BaseLabeller(ABC):
             raise ValueError("time_series_list must contain at least two elements.")
 
     @abstractmethod
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[True] = True
+    ) -> list[int]: ...
+
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[False]
+    ) -> list[Labels]: ...
+
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> T:
@@ -65,4 +75,4 @@ class BaseLabeller(ABC):
         Returns:
             Union[list[int], list[Labels]]: List of trend labels, either as integers or Labels enum values.
         """
-        pass
+        raise NotImplementedError

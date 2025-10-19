@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, overload, Literal
 
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, extract_label_values
@@ -47,7 +47,7 @@ class TernaryCTL(BaseLabeller):
         self.window_size = window_size
         self.labels: list[Labels] = list()
 
-    def _get_first_label(self, time_series_list: list[float]) -> None:
+    def _get_first_label(self, time_series_list: list[float]) -> list[Labels]:
         """
         Find upward trends in a time series of closing prices. This is the first step of the ternary trend labelling algorithm.
 
@@ -88,7 +88,7 @@ class TernaryCTL(BaseLabeller):
         """Convert Labels enum to their integer values"""
         return [label.value for label in self.labels]
 
-    def _right_pad_labels(self, total_length: int) -> list[int]:
+    def _right_pad_labels(self, total_length: int) -> None:
         """
         Right pad the labels list by duplicating the last element.
         Args:
@@ -98,7 +98,7 @@ class TernaryCTL(BaseLabeller):
             list[Labels]: Padded list of label values with length equal to target_length.
         """
         if len(self.labels) == 0:
-            return []
+            return None
         self.labels += [self.labels[-1]] * (total_length - len(self.labels))
 
     def _update_labels(self, trend_start: int, current_idx: int, label: Labels) -> None:
@@ -121,6 +121,16 @@ class TernaryCTL(BaseLabeller):
         return (previous_price - reference_price) * (
             current_price - reference_price
         ) <= 0
+
+    @overload
+    def get_labels(
+        self, prices: list[float], return_labels_as_int: Literal[True] = True
+    ) -> list[int]: ...
+
+    @overload
+    def get_labels(
+        self, prices: list[float], return_labels_as_int: Literal[False]
+    ) -> list[Labels]: ...
 
     def get_labels(
         self, prices: list[float], return_labels_as_int: bool = True

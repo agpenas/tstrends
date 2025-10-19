@@ -19,7 +19,7 @@ class Optimizer:
     as the objective function to maximize.
 
     Attributes:
-        returns_estimator (Type[BaseReturnEstimator]): The returns estimator class to use.
+        returns_estimator (BaseReturnEstimator): The returns estimator instance to use.
         initial_points (int): Number of initial random points for optimization.
         nb_iter (int): Number of optimization iterations.
         random_state (int | None): Random seed for reproducibility.
@@ -27,7 +27,7 @@ class Optimizer:
 
     Example:
         >>> from returns_estimation import SimpleReturnEstimator
-        >>> optimizer = Optimizer(SimpleReturnEstimator, initial_points=5, nb_iter=100)
+        >>> optimizer = Optimizer(SimpleReturnEstimator(), initial_points=5, nb_iter=100)
         >>> result = optimizer.optimize(BinaryCTL, prices)
         >>> print(result['params'])  # {'omega': 0.005}
 
@@ -39,7 +39,7 @@ class Optimizer:
 
     def __init__(
         self,
-        returns_estimator: Type[BaseReturnEstimator],
+        returns_estimator: BaseReturnEstimator,
         initial_points: int = 10,
         nb_iter: int = 1_000,
         random_state: int | None = None,
@@ -88,7 +88,7 @@ class Optimizer:
         labeller_class: Type[BaseLabeller],
         time_series_list: Union[list[float], list[list[float]]],
         bounds: Optional[dict[str, tuple[float, float]]] = None,
-        acquisition_function: Optional[Type[acquisition.AcquisitionFunction]] = None,
+        acquisition_function: Optional[acquisition.AcquisitionFunction] = None,
         verbose: Optional[int] = 0,
     ) -> dict[str, Union[dict, float]]:
         """

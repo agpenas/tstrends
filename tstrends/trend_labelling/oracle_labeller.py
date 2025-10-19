@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, overload, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -66,7 +66,7 @@ class BaseOracleTrendLabeller(BaseLabeller):
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
-    def _forward_pass(self, time_series_list: NDArray) -> NDArray:
+    def _forward_pass(self, time_series_list: NDArray, P: NDArray) -> NDArray:
         """
         Perform the forward pass to calculate the state matrix.
         """
@@ -92,6 +92,16 @@ class BaseOracleTrendLabeller(BaseLabeller):
 
         return labels
 
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[True] = True
+    ) -> list[int]: ...
+
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[False]
+    ) -> list[Labels]: ...
+
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> Union[list[int], list[Labels]]:
@@ -111,7 +121,7 @@ class BaseOracleTrendLabeller(BaseLabeller):
         time_series_arr = np.array(time_series_list)
 
         P = self._compute_transition_costs(time_series_arr)
-        S = self._forward_pass(time_series_list, P)
+        S = self._forward_pass(time_series_arr, P)
         labels = self._backward_pass(S, P, time_series_arr)
 
         scaled_labels = self._scale_labels(labels)
@@ -186,7 +196,9 @@ class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
 
         return P
 
-    def _forward_pass(self, time_series_list: list[float], P: NDArray):
+    def _forward_pass(
+        self, time_series_list: list[float] | NDArray, P: NDArray
+    ) -> NDArray:
         """
         Perform the forward pass to calculate the state matrix.
         Args:
@@ -288,7 +300,9 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
 
         return P
 
-    def _forward_pass(self, time_series_list: list[float], P: NDArray) -> NDArray:
+    def _forward_pass(
+        self, time_series_list: list[float] | NDArray, P: NDArray
+    ) -> NDArray:
         """
         Perform the forward pass to calculate the state matrix.
 

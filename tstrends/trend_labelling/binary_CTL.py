@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, overload, Literal
 
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, extract_label_values
@@ -13,7 +13,7 @@ class TrendState:
     current_low: float = 0.0
     curr_high_time: int = 0
     curr_low_time: int = 0
-    current_direction: int = Labels.NEUTRAL
+    current_direction: Labels = Labels.NEUTRAL
     extreme_point_idx: int = 0
 
     def set_upwards_trend(self, price: float, time_idx: int) -> None:
@@ -85,7 +85,7 @@ class BinaryCTL(BaseLabeller):
         """
         self._labels = [Labels.NEUTRAL] * length
 
-    def _update_labels(self, start_idx: int, end_idx: int, label_value: int) -> None:
+    def _update_labels(self, start_idx: int, end_idx: int, label_value: Labels) -> None:
         """Update a range of labels with the specified value.
 
         Args:
@@ -158,6 +158,16 @@ class BinaryCTL(BaseLabeller):
                 Labels.DOWN,
             )
             self._state.set_upwards_trend(price, time_idx)
+
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[True] = True
+    ) -> list[int]: ...
+
+    @overload
+    def get_labels(
+        self, time_series_list: list[float], return_labels_as_int: Literal[False]
+    ) -> list[Labels]: ...
 
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True

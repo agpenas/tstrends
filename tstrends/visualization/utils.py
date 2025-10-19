@@ -6,7 +6,7 @@ import matplotlib.colors as mcolors
 def plot_trend_labels(
     time_series_list: list[float],
     labels: list[int],
-    title: str = None,
+    title: str | None = None,
     title_size: int = 12,
 ) -> None:
     """Simple visualization of the time series series with trend labels.
@@ -65,7 +65,7 @@ def plot_trend_labels(
 def plot_trend_labels_with_gradation(
     time_series_list: list[float],
     labels: list[float],
-    title: str = None,
+    title: str | None = None,
     title_size: int = 12,
     normalize: bool = True,
 ) -> None:

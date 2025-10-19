@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 from collections import Counter
+from typing import Sequence
+
+import numpy as np
 
 from .fees_config import FeesConfig
 
@@ -24,7 +27,7 @@ class BaseReturnEstimator(ABC):
                     return calculated_return
     """
 
-    def _verify_input_data(self, prices: list[float]) -> None:
+    def _verify_input_data(self, prices: Sequence[float]) -> None:
         """Verify that the input data is valid.
 
         Args:
@@ -33,13 +36,18 @@ class BaseReturnEstimator(ABC):
         Raises:
             ValueError: If any specification of prices is not valid
         """
-        if not isinstance(prices, list):
-            raise ValueError("Prices must be a list")
-        if not all(isinstance(price, float) for price in prices):
-            raise ValueError("Prices must be a list of floats")
+        if not isinstance(prices, (list, tuple, np.ndarray)):
+            raise ValueError("Prices must be a sequence of numerics")
+        # Convert to numpy array of float and ensure shape
+        try:
+            arr = np.asarray(prices, dtype=float)
+        except Exception as exc:
+            raise ValueError("Prices must be numeric and coercible to float") from exc
+        if arr.ndim != 1:
+            raise ValueError("Prices must be a 1-D sequence")
 
     @abstractmethod
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """Estimate returns based on prices and labels.
 
         Args:
@@ -72,7 +80,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         (101.0 - 100.0) * 1 + (99.0 - 101.0) * -1 = 2.0
     """
 
-    def _verify_labels(self, prices: list[float], labels: list[int]):
+    def _verify_labels(self, prices: Sequence[float], labels: list[int]):
         """Verify that the labels are valid.
 
         Raises:
@@ -87,7 +95,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         if not all(label in [-1, 0, 1] for label in labels):
             raise ValueError("Labels must be -1, 0, or 1")
 
-    def _calculate_return(self, prices: list[float], labels: list[int]) -> float:
+    def _calculate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """Calculate the return based on price differences and labels.
 
         Returns:
@@ -98,7 +106,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         ]
         return sum(return_value)
 
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """
         Estimate the return based on price differences and labels.
 
