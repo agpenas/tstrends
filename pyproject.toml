@@ -46,6 +46,9 @@ classifiers = [
     "Intended Audience :: Financial and Insurance Industry",
 ]
 package-mode = true
+include = [
+    "tstrends/py.typed",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
