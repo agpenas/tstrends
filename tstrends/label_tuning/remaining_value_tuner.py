@@ -5,7 +5,13 @@ This module provides a tuner that enhances trend labels with information about
 the remaining value change until the end of a continuous trend interval.
 """
 
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
+
 from itertools import pairwise
+from typing import Any
 import numpy as np
 
 from tstrends.label_tuning.base import BaseLabelTuner, BaseSmoother
@@ -28,6 +34,7 @@ class RemainingValueTuner(BaseLabelTuner):
 
         """
 
+    @override
     def tune(
         self,
         time_series: list[float],
@@ -36,6 +43,7 @@ class RemainingValueTuner(BaseLabelTuner):
         normalize_over_interval: bool = False,
         shift_periods: int = 0,
         smoother: BaseSmoother | None = None,
+        **kwargs: Any,
     ) -> list[float]:
         """
         Tune trend labels to provide information about remaining value change.
@@ -106,7 +114,7 @@ class RemainingValueTuner(BaseLabelTuner):
             result = shifted
 
         if smoother:
-            result = smoother.smooth(result)
+            result = smoother.smooth(result.tolist())
 
         return result.tolist()
 

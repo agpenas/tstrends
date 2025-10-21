@@ -129,17 +129,17 @@ class TernaryCTL(BaseLabeller):
 
     @overload
     def get_labels(
-        self, prices: list[float], return_labels_as_int: Literal[True] = True
+        self, time_series_list: list[float], return_labels_as_int: Literal[True] = True
     ) -> list[int]: ...
 
     @overload
     def get_labels(
-        self, prices: list[float], return_labels_as_int: Literal[False]
+        self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
     @override
     def get_labels(
-        self, prices: list[float], return_labels_as_int: bool = True
+        self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> list[int] | list[Labels]:
         """Labels trends in a time series of closing prices using a ternary classification approach.
 
@@ -158,7 +158,7 @@ class TernaryCTL(BaseLabeller):
 
         Parameters
         ----------
-        prices : list[float]
+        time_series_list : list[float]
             List of closing prices.
         return_labels_as_int : bool, optional
             If True, returns integer labels (-1, 0, 1), if False returns Labels enum values.
@@ -170,14 +170,14 @@ class TernaryCTL(BaseLabeller):
             List of labels. If return_labels_as_int is True, returns integers (-1, 0, 1),
             otherwise returns Labels enum values.
         """
-        self._verify_time_series(prices)
+        self._verify_time_series(time_series_list)
         # Initialize labels
-        self.labels = self._get_first_label(prices)
+        self.labels = self._get_first_label(time_series_list)
         # Initialize trend start index
         trend_start = 0
         # Iterate over prices starting from the second price
-        for current_idx, current_price in enumerate(prices[1:], start=1):
-            reference_price = prices[trend_start]
+        for current_idx, current_price in enumerate(time_series_list[1:], start=1):
+            reference_price = time_series_list[trend_start]
             window_exceeded = current_idx - trend_start > self.window_size
 
             match self.labels[-1]:
@@ -220,7 +220,7 @@ class TernaryCTL(BaseLabeller):
                         continue
                     trend_start = current_idx
 
-        self._right_pad_labels(len(prices))
+        self._right_pad_labels(len(time_series_list))
         return (
             extract_label_values(self.labels) if return_labels_as_int else self.labels
         )

@@ -124,8 +124,8 @@ class Optimizer:
                 return self.returns_estimator.estimate_return(
                     time_series_list,  # pyright: ignore[reportArgumentType]
                     labeller.get_labels(
-                        time_series_list
-                    ),  # pyright: ignore[reportArgumentType]
+                        time_series_list  # pyright: ignore[reportArgumentType]
+                    ),
                 )
 
             # Multiple time series case
@@ -148,6 +148,12 @@ class Optimizer:
 
         # Return the optimization results directly
         return {
-            "params": self._process_parameters(self._optimizer.max["params"]),
-            "target": self._optimizer.max["target"],
+            "params": self._process_parameters(
+                self._optimizer.max[  # pyright: ignore[reportUnknownArgumentType, reportOptionalSubscript]
+                    "params"
+                ]
+            ),
+            "target": self._optimizer.max[  # pyright: ignore[reportOptionalSubscript]
+                "target"
+            ],
         }

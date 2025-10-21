@@ -1,6 +1,12 @@
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
+
 from abc import ABC, abstractmethod
 from collections import Counter
-from typing import Sequence
+from collections.abc import Sequence
+
 
 import numpy as np
 
@@ -160,7 +166,9 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
         """
         self.fees_config = fees_config or FeesConfig()
 
-    def _estimate_holding_fees(self, prices: list[float], labels: list[int]) -> float:
+    def _estimate_holding_fees(
+        self, prices: Sequence[float], labels: list[int]
+    ) -> float:
         """Estimate the holding fees based on the labels and prices."""
         label_counter = Counter(labels)
         return (
@@ -169,7 +177,7 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
         )
 
     def _estimate_transaction_fees(
-        self, prices: list[float], labels: list[int]
+        self, prices: Sequence[float], labels: list[int]
     ) -> float:
         """Estimate the transaction fees based on the labels and prices."""
         total_fees = 0
@@ -190,12 +198,13 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             ) * fee
         return total_fees
 
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    @override
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """
         Estimate the return based on price differences and labels, and include fees cost if it is not zero.
 
         Args:
-            prices (list[float]): A list of historical prices
+            prices (Sequence[float]): A sequence of historical prices
             labels (list[int]): A list of position labels (-1, 0, or 1)
 
         Returns:
