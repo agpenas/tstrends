@@ -1,5 +1,3 @@
-from typing import Type
-
 from ..trend_labelling import (
     BaseLabeller,
     BinaryCTL,
@@ -29,7 +27,7 @@ class OptimizationBounds:
         theoretical constraints of each labeller implementation.
     """
 
-    implemented_labellers = [
+    implemented_labellers: list[type[BaseLabeller]] = [
         BinaryCTL,
         TernaryCTL,
         OracleBinaryTrendLabeller,
@@ -37,13 +35,13 @@ class OptimizationBounds:
     ]
 
     def get_bounds(
-        self, labeller_class: Type[BaseLabeller]
+        self, labeller_class: type[BaseLabeller]
     ) -> dict[str, tuple[float, float]]:
         """
         Get the default bounds for a given labeller class.
 
         Args:
-            labeller_class (Type[BaseLabeller]): The labeller class to get bounds for.
+            labeller_class (type[BaseLabeller]): The labeller class to get bounds for.
 
         Returns:
             dict[str, tuple[float, float]]: A dictionary mapping parameter names to their bounds.
@@ -51,15 +49,10 @@ class OptimizationBounds:
         Raises:
             ValueError: If the labeller class is not supported.
         """
-        if labeller_class not in self.implemented_labellers:
-            raise ValueError(f"No default bounds for labeller class {labeller_class}")
         if labeller_class == BinaryCTL:
             return {"omega": (0.0, 0.01)}
         elif labeller_class == TernaryCTL:
-            return {
-                "marginal_change_thres": (0.000001, 0.1),
-                "window_size": (1, 5000),
-            }
+            return {"marginal_change_thres": (0.000001, 0.1), "window_size": (1, 5000)}
         elif labeller_class == OracleBinaryTrendLabeller:
             return {"transaction_cost": (0.0, 0.01)}
         elif labeller_class == OracleTernaryTrendLabeller:
@@ -67,3 +60,5 @@ class OptimizationBounds:
                 "transaction_cost": (0.0, 0.01),
                 "neutral_reward_factor": (0.0, 0.1),
             }
+
+        raise ValueError(f"No default bounds for labeller class {labeller_class}")
