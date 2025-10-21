@@ -58,10 +58,10 @@ class TestSimpleReturnEstimator:
         "invalid_prices,invalid_labels,error_type,error_match",
         [
             (
-                [100, "101", 99.0],
+                [100.0, "abc", 99.0],
                 [1, 1, 1],
                 ValueError,
-                "Prices must be a list of floats",
+                "Prices must be numeric and coercible to float",
             ),
             (
                 [100.0, 101.0],

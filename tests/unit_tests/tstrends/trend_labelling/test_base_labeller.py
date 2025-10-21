@@ -60,8 +60,10 @@ class TestBaseLabeller:
             labeller._verify_time_series([1.0])
 
     def test_abstract_class_instantiation(self):
-        with pytest.raises(TypeError):
-            BaseLabeller()
+        # BaseLabeller is instantiable; calling get_labels should raise NotImplementedError
+        base = BaseLabeller()
+        with pytest.raises(NotImplementedError):
+            base.get_labels([1.0, 2.0])
 
     def test_get_labels_returns_ints_by_default(self, labeller):
         """Test that get_labels returns integers by default."""

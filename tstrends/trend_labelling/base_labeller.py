@@ -1,10 +1,8 @@
 import math
 from abc import ABC, abstractmethod
-from typing import TypeVar, overload, Literal
+from typing import overload, Literal
 
 from .label_scaling import Labels
-
-T = TypeVar("T", list[int], list[Labels])
 
 
 class BaseLabeller(ABC):
@@ -38,9 +36,15 @@ class BaseLabeller(ABC):
             TypeError: If time_series_list is not a list or contains non-numeric values.
             ValueError: If time_series_list is empty or too short.
         """
-        if not isinstance(time_series_list, list):
-            raise TypeError("time_series_list must be a list.")
-        if not all(isinstance(price, (int, float)) for price in time_series_list):
+        if not isinstance(
+            time_series_list, list
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                "time_series_list must be a list."
+            )  # pyright: ignore[reportUnreachable]
+        if not all(
+            isinstance(price, (int, float)) for price in time_series_list
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise TypeError(
                 "All elements in time_series_list must be integers or floats."
             )
@@ -50,7 +54,6 @@ class BaseLabeller(ABC):
         if len(time_series_list) < 2:
             raise ValueError("time_series_list must contain at least two elements.")
 
-    @abstractmethod
     @overload
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: Literal[True] = True
@@ -61,9 +64,10 @@ class BaseLabeller(ABC):
         self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
+    @abstractmethod
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
-    ) -> T:
+    ) -> list[int] | list[Labels]:
         """
         Label trends in a time series of prices.
 
