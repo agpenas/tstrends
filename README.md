@@ -39,6 +39,7 @@ A robust Python package for automated trend labelling in time series data with a
 - [License](#license)
 
 
+<a id="features"></a>
 ## ✨ Features
 
 ### Trend Labelling Approaches
@@ -62,12 +63,14 @@ A robust Python package for automated trend labelling in time series data with a
 - Empirically tested and customizable parameter bounds
 
 
+<a id="installation"></a>
 ## 🔧 Installation
 
 ```bash
 pip install tstrends
 ```
 
+<a id="quick-start"></a>
 ## 🚀 Quick Start
 
 ```python
@@ -102,6 +105,7 @@ optimal_labeller = BinaryCTL(
 optimal_labels = optimal_labeller.get_labels(prices)
 ```
 
+<a id="core-components"></a>
 ## 🔩 Core Components
 
 ### A) Trend Labellers
@@ -269,18 +273,21 @@ Both smoothers support "left" direction (using only past data) or "centered" dir
 
 See the [label tuner example notebook](https://github.com/agpenas/tstrends/blob/main/notebooks/label_tuner_example.ipynb) for a detailed example of label tuning.
 
+<a id="roadmap"></a>
 ## 🚧 Roadmap
 
 - [x] Transform labels into trend momentum / potential.
 - [ ] Calculate returns for one subset of labels only.
 - [ ] Always good to explore more labellers.
 
+<a id="contributing"></a>
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate and adhere to the existing coding style.
 
+<a id="bibliography"></a>
 ## 📚 Bibliography
 
 The algorithms implemented in this package are based or inspired by the following academic papers:
@@ -291,6 +298,7 @@ The algorithms implemented in this package are based or inspired by the followin
 
 [3]: Kovačević, Tomislav & Merćep, Andro & Begušić, Stjepan & Kostanjcar, Zvonko. (2023). Optimal Trend Labeling in Financial Time Series. IEEE Access. PP. 1-1. 10.1109/ACCESS.2023.3303283. 
 
+<a id="license"></a>
 ## 📄 License
 
 [BSD-2-Clause](LICENSE)
