@@ -5,6 +5,11 @@ This module provides various smoothing algorithm implementations
 for trend label processing.
 """
 
+try:
+    from typing import override  # Python 3.12+
+except ImportError:
+    from typing_extensions import override
+
 import numpy as np
 from scipy import signal
 
@@ -30,6 +35,7 @@ class SimpleMovingAverage(BaseSmoother):
     def __init__(self, window_size: int = 3, direction: str | Direction = "left"):
         super().__init__(window_size, direction)
 
+    @override
     def smooth(self, values: list[float]) -> np.ndarray:
         array = np.asarray(values)
         window = np.ones(self.window_size) / self.window_size
@@ -70,6 +76,7 @@ class LinearWeightedAverage(BaseSmoother):
     def __init__(self, window_size: int = 3, direction: str | Direction = "left"):
         super().__init__(window_size, direction)
 
+    @override
     def smooth(self, values: list[float]) -> np.ndarray:
         array = np.asarray(values)
 
@@ -95,7 +102,9 @@ class LinearWeightedAverage(BaseSmoother):
             return smoothed
 
         # Triangular weights centered on each point
-        weights = signal.windows.triang(self.window_size)
+        weights = signal.windows.triang(
+            self.window_size
+        )  # pyright: ignore[reportUnknownMemberType]
         weights = weights / weights.sum()
         smoothed = np.convolve(padded_array, weights, mode="same")
         smoothed = smoothed[self.window_size : self.window_size + len(array)]
