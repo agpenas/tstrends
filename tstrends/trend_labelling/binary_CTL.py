@@ -1,5 +1,10 @@
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
+
 from dataclasses import dataclass
-from typing import Union, overload, Literal
+from typing import overload, Literal
 
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, extract_label_values
@@ -169,9 +174,10 @@ class BinaryCTL(BaseLabeller):
         self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
+    @override
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
-    ) -> Union[list[int], list[Labels]]:
+    ) -> list[int] | list[Labels]:
         """Auto-labels a price time series based on the provided algorithm.
 
         Parameters

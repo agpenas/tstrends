@@ -1,4 +1,9 @@
-from typing import Union, overload, Literal
+from typing import overload, Literal
+
+try:
+    from typing import override  # Python 3.12+
+except ImportError:  # pragma: no cover - fallback for older Python
+    from typing_extensions import override
 
 import numpy as np
 from numpy.typing import NDArray
@@ -28,6 +33,8 @@ class BaseOracleTrendLabeller(BaseLabeller):
         final output format.
     """
 
+    transaction_cost: float
+
     def __init__(self, transaction_cost: float) -> None:
         """
         Initialize the base Oracle Trend Labeller.
@@ -39,7 +46,7 @@ class BaseOracleTrendLabeller(BaseLabeller):
             raise TypeError("transaction_cost must be a float.")
         self.transaction_cost = transaction_cost
 
-    def _scale_labels(self, labels: NDArray) -> NDArray:
+    def _scale_labels(self, labels: NDArray[np.int_]) -> NDArray[np.int_]:
         """
         Scale the labels.
         """
@@ -60,35 +67,44 @@ class BaseOracleTrendLabeller(BaseLabeller):
         if len(time_series_list) < 2:
             raise ValueError("time_series_list must contain at least two elements.")
 
-    def _compute_transition_costs(self, time_series_list: NDArray) -> NDArray:
+    def _compute_transition_costs(
+        self, time_series_list: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Compute the transition costs.
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
-    def _forward_pass(self, time_series_list: NDArray, P: NDArray) -> NDArray:
+    def _forward_pass(
+        self, time_series_list: NDArray[np.float64], P: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Perform the forward pass to calculate the state matrix.
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
     def _backward_pass(
-        self, S: NDArray, P: NDArray, time_series_arr: NDArray
-    ) -> NDArray:
+        self,
+        S: NDArray[np.float64],
+        P: NDArray[np.float64],
+        time_series_arr: NDArray[np.float64],
+    ) -> NDArray[np.int_]:
         """
         Perform the backward pass to determine the trend labels.
         Args:
-            S (NDArray): State matrix of cumulative returns.
-            P (NDArray): Transition cost matrix.
+            S (NDArray[np.float64]): State matrix of cumulative returns.
+            P (NDArray[np.float64]): Transition cost matrix.
         Returns:
-            labels (NDArray): Optimal trend labels.
+            labels (NDArray[np.int_]): Optimal trend labels.
         """
         T = len(time_series_arr)
         labels = np.zeros(T, dtype=int)
-        labels[-1] = np.argmax(S[-1])  # Start from the last state
+        last_row = np.asarray(S[-1], dtype=np.float64)
+        labels[-1] = int(np.argmax(last_row))  # Start from the last state
 
         for t in range(T - 2, -1, -1):
-            labels[t] = np.argmax(S[t] + P[t, :, labels[t + 1]])
+            row = np.asarray(S[t] + P[t, :, labels[t + 1]], dtype=np.float64)
+            labels[t] = int(np.argmax(row))
 
         return labels
 
@@ -102,9 +118,10 @@ class BaseOracleTrendLabeller(BaseLabeller):
         self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
+    @override
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
-    ) -> Union[list[int], list[Labels]]:
+    ) -> list[int] | list[Labels]:
         """
         Run the full Oracle Trend Labeling Algorithm over a time series.
 
@@ -118,18 +135,17 @@ class BaseOracleTrendLabeller(BaseLabeller):
                                           otherwise returns Labels enum values.
         """
         self._verify_time_series(time_series_list)
-        time_series_arr = np.array(time_series_list)
+        time_series_arr = np.array(time_series_list, dtype=np.float64)
 
         P = self._compute_transition_costs(time_series_arr)
         S = self._forward_pass(time_series_arr, P)
         labels = self._backward_pass(S, P, time_series_arr)
 
         scaled_labels = self._scale_labels(labels)
-        return (
-            scaled_labels.tolist()
-            if return_labels_as_int
-            else [Labels(x) for x in scaled_labels]
-        )
+        ints = [int(x) for x in scaled_labels.tolist()]
+        if return_labels_as_int:
+            return ints
+        return [Labels(v) for v in ints]
 
 
 class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
@@ -164,24 +180,30 @@ class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
         """
         super().__init__(transaction_cost)
 
-    def _scale_labels(self, labels: NDArray) -> NDArray:
+    @override
+    def _scale_labels(self, labels: NDArray[np.int_]) -> NDArray[np.int_]:
         """
         Scale the labels.
         """
         return scale_binary(labels)
 
-    def _compute_transition_costs(self, time_series_list: NDArray):
+    @override
+    def _compute_transition_costs(
+        self, time_series_list: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Initialize the transition cost matrix.
+        Args:
+            time_series_list (NDArray[np.float64]): Array of price values.
         Returns:
-            P (NDArray): Transition cost matrix of shape (T-1, 2, 2).
+            P (NDArray[np.float64]): Transition cost matrix of shape (T-1, 2, 2).
         """
         ts_len = len(time_series_list)
 
-        P = np.zeros((ts_len - 1, 2, 2))
+        P = np.zeros((ts_len - 1, 2, 2), dtype=np.float64)
 
         for t in range(ts_len - 1):
-            price_change = time_series_list[t + 1] - time_series_list[t]
+            price_change: float = time_series_list[t + 1] - time_series_list[t]
             # Staying in the same state
             P[t, 0, 0] = 0  # No cost for staying in downtrend
             P[t, 1, 1] = price_change  # Cost for staying in uptrend
@@ -196,17 +218,22 @@ class OracleBinaryTrendLabeller(BaseOracleTrendLabeller):
 
         return P
 
+    @override
     def _forward_pass(
-        self, time_series_list: list[float] | NDArray, P: NDArray
-    ) -> NDArray:
+        self,
+        time_series_list: list[float] | NDArray[np.float64],
+        P: NDArray[np.float64],
+    ) -> NDArray[np.float64]:
         """
         Perform the forward pass to calculate the state matrix.
         Args:
-            P (NDArray): Transition cost matrix.
+            P (NDArray[np.float64]): Transition cost matrix.
         Returns:
-            S (NDArray): State matrix of cumulative returns.
+            S (NDArray[np.float64]): State matrix of cumulative returns.
         """
-        S = np.zeros((len(time_series_list), 2))  # Initialize state matrix
+        S = np.zeros(
+            (len(time_series_list), 2), dtype=np.float64
+        )  # Initialize state matrix
 
         # Iterate over time steps in forward direction
         for t in range(1, len(time_series_list)):
@@ -248,6 +275,8 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
         tuned up together with the transaction_cost.
     """
 
+    neutral_reward_factor: float
+
     def __init__(self, transaction_cost: float, neutral_reward_factor: float) -> None:
         """
         Initialize the ternary trend labeller.
@@ -261,29 +290,33 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
             raise TypeError("neutral_reward_factor must be a float.")
         self.neutral_reward_factor = neutral_reward_factor
 
-    def _scale_labels(self, labels: NDArray) -> NDArray:
+    @override
+    def _scale_labels(self, labels: NDArray[np.int_]) -> NDArray[np.int_]:
         """
         Scale the labels.
         """
         return scale_ternary(labels)
 
-    def _compute_transition_costs(self, time_series_arr: NDArray) -> NDArray:
+    @override
+    def _compute_transition_costs(
+        self, time_series_list: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Initialize the transition cost matrix for three states.
 
         Args:
-            time_series_arr (NDArray): Array of price values.
+            time_series_list (NDArray[np.float64]): Array of price values.
         Returns:
-            NDArray: Transition cost matrix of shape (T-1, 3, 3).
+            NDArray[np.float64]: Transition cost matrix of shape (T-1, 3, 3).
         """
-        T = len(time_series_arr)
+        T = len(time_series_list)
         P = np.full(
-            (T - 1, 3, 3), -np.inf
+            (T - 1, 3, 3), -np.inf, dtype=np.float64
         )  # Initialize with -inf for forbidden transitions
 
         for t in range(T - 1):
-            price_change = time_series_arr[t + 1] - time_series_arr[t]
-            switch_cost = -time_series_arr[t] * self.transaction_cost
+            price_change: float = time_series_list[t + 1] - time_series_list[t]
+            switch_cost: float = -time_series_list[t] * self.transaction_cost
 
             # Rewards for staying in same state
             P[t, 0, 0] = -price_change  # Reward for staying in downtrend
@@ -300,21 +333,24 @@ class OracleTernaryTrendLabeller(BaseOracleTrendLabeller):
 
         return P
 
+    @override
     def _forward_pass(
-        self, time_series_list: list[float] | NDArray, P: NDArray
-    ) -> NDArray:
+        self,
+        time_series_list: list[float] | NDArray[np.float64],
+        P: NDArray[np.float64],
+    ) -> NDArray[np.float64]:
         """
         Perform the forward pass to calculate the state matrix.
 
         Args:
             time_series_list (list[float]): The price series.
-            P (NDArray): Transition cost matrix.
+            P (NDArray[np.float64]): Transition cost matrix.
 
         Returns:
-            NDArray: State matrix of cumulative returns.
+            NDArray[np.float64]: State matrix of cumulative returns.
         """
         T = len(time_series_list)
-        S = np.zeros((T, 3))  # Initialize state matrix for 3 states
+        S = np.zeros((T, 3), dtype=np.float64)  # Initialize state matrix for 3 states
 
         # Iterate over time steps in forward direction
         for t in range(1, T):

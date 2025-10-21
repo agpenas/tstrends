@@ -102,9 +102,9 @@ class LinearWeightedAverage(BaseSmoother):
             return smoothed
 
         # Triangular weights centered on each point
-        weights = signal.windows.triang(
+        weights = signal.windows.triang(  # pyright: ignore[reportAttributeAccessIssue]
             self.window_size
-        )  # pyright: ignore[reportUnknownMemberType]
+        )
         weights = weights / weights.sum()
         smoothed = np.convolve(padded_array, weights, mode="same")
         smoothed = smoothed[self.window_size : self.window_size + len(array)]

@@ -1,4 +1,9 @@
-from typing import Union, overload, Literal
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
+
+from typing import overload, Literal
 
 from .base_labeller import BaseLabeller
 from .label_scaling import Labels, extract_label_values
@@ -132,9 +137,10 @@ class TernaryCTL(BaseLabeller):
         self, prices: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
+    @override
     def get_labels(
         self, prices: list[float], return_labels_as_int: bool = True
-    ) -> Union[list[int], list[Labels]]:
+    ) -> list[int] | list[Labels]:
         """Labels trends in a time series of closing prices using a ternary classification approach.
 
         The method identifies three distinct states in price movements:

@@ -20,26 +20,26 @@ BINARY_MAP = {0: Labels.DOWN, 1: Labels.UP}
 TERNARY_MAP = {0: Labels.DOWN, 1: Labels.NEUTRAL, 2: Labels.UP}
 
 
-def scale_binary(labels: NDArray) -> NDArray:
+def scale_binary(labels: NDArray[np.int_]) -> NDArray[np.int_]:
     """Scale binary labels from {0,1} to {-1,1}.
 
     Args:
-        labels (NDArray): Input labels (must contain only 0s and 1s)
+        labels (NDArray[np.int_]): Input labels (must contain only 0s and 1s)
 
     Returns:
-        NDArray: Scaled labels in {-1,1}
+        NDArray[np.int_]: Scaled labels in {-1,1}
     """
     return np.vectorize(BINARY_MAP.get)(labels)
 
 
-def scale_ternary(labels: NDArray) -> NDArray:
+def scale_ternary(labels: NDArray[np.int_]) -> NDArray[np.int_]:
     """Scale ternary labels from {0,1,2} to {-1,0,1}.
 
     Args:
-        labels (NDArray): Input labels (must contain only 0s, 1s, and 2s)
+        labels (NDArray[np.int_]): Input labels (must contain only 0s, 1s, and 2s)
 
     Returns:
-        NDArray: Scaled labels in {-1,0,1}
+        NDArray[np.int_]: Scaled labels in {-1,0,1}
     """
     return np.vectorize(TERNARY_MAP.get)(labels)
 
