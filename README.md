@@ -25,19 +25,18 @@ A robust Python package for automated trend labelling in time series data with a
 
 
 ## 📜 Table of Contents
-- [Features](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#sparkles-features)
-- [Installation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#installation)
-- [Quick Start](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#quick-start)
-- [Core Components](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#core-components)
-  - [A) Trend Labellers](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#a-trend-labellers)
-  - [B) Returns Estimation](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#b-returns-estimation)
-  - [C) Parameter Optimization](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#c-parameter-optimization)
-  - [D) Label Tuning](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#d-label-tuning-expressing-trend-potential)
-- [Usage Examples](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#usage-examples)
-- [Roadmap](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#roadmap)
-- [Contributing](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#contributing)
-- [Bibliography](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#bibliography)
-- [License](https://github.com/agpenas/tstrends/tree/main?tab=readme-ov-file#license)
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Core Components](#core-components)
+  - [A) Trend Labellers](#a-trend-labellers)
+  - [B) Returns Estimation](#b-returns-estimation)
+  - [C) Parameter Optimization](#c-parameter-optimization)
+  - [D) Label Tuning](#d-label-tuning-expressing-trend-potential)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Bibliography](#bibliography)
+- [License](#license)
 
 
 ## ✨ Features
