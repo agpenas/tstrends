@@ -1,5 +1,14 @@
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
+
 from abc import ABC, abstractmethod
 from collections import Counter
+from collections.abc import Sequence
+
+
+import numpy as np
 
 from .fees_config import FeesConfig
 
@@ -24,7 +33,7 @@ class BaseReturnEstimator(ABC):
                     return calculated_return
     """
 
-    def _verify_input_data(self, prices: list[float]) -> None:
+    def _verify_input_data(self, prices: Sequence[float]) -> None:
         """Verify that the input data is valid.
 
         Args:
@@ -33,13 +42,18 @@ class BaseReturnEstimator(ABC):
         Raises:
             ValueError: If any specification of prices is not valid
         """
-        if not isinstance(prices, list):
-            raise ValueError("Prices must be a list")
-        if not all(isinstance(price, float) for price in prices):
-            raise ValueError("Prices must be a list of floats")
+        if not isinstance(prices, (list, tuple, np.ndarray)):
+            raise ValueError("Prices must be a sequence of numerics")
+        # Convert to numpy array of float and ensure shape
+        try:
+            arr = np.asarray(prices, dtype=float)
+        except Exception as exc:
+            raise ValueError("Prices must be numeric and coercible to float") from exc
+        if arr.ndim != 1:
+            raise ValueError("Prices must be a 1-D sequence")
 
     @abstractmethod
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """Estimate returns based on prices and labels.
 
         Args:
@@ -72,7 +86,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         (101.0 - 100.0) * 1 + (99.0 - 101.0) * -1 = 2.0
     """
 
-    def _verify_labels(self, prices: list[float], labels: list[int]):
+    def _verify_labels(self, prices: Sequence[float], labels: list[int]):
         """Verify that the labels are valid.
 
         Raises:
@@ -87,7 +101,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         if not all(label in [-1, 0, 1] for label in labels):
             raise ValueError("Labels must be -1, 0, or 1")
 
-    def _calculate_return(self, prices: list[float], labels: list[int]) -> float:
+    def _calculate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """Calculate the return based on price differences and labels.
 
         Returns:
@@ -98,7 +112,7 @@ class SimpleReturnEstimator(BaseReturnEstimator):
         ]
         return sum(return_value)
 
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """
         Estimate the return based on price differences and labels.
 
@@ -152,7 +166,9 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
         """
         self.fees_config = fees_config or FeesConfig()
 
-    def _estimate_holding_fees(self, prices: list[float], labels: list[int]) -> float:
+    def _estimate_holding_fees(
+        self, prices: Sequence[float], labels: list[int]
+    ) -> float:
         """Estimate the holding fees based on the labels and prices."""
         label_counter = Counter(labels)
         return (
@@ -161,7 +177,7 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
         )
 
     def _estimate_transaction_fees(
-        self, prices: list[float], labels: list[int]
+        self, prices: Sequence[float], labels: list[int]
     ) -> float:
         """Estimate the transaction fees based on the labels and prices."""
         total_fees = 0
@@ -182,12 +198,13 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             ) * fee
         return total_fees
 
-    def estimate_return(self, prices: list[float], labels: list[int]) -> float:
+    @override
+    def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """
         Estimate the return based on price differences and labels, and include fees cost if it is not zero.
 
         Args:
-            prices (list[float]): A list of historical prices
+            prices (Sequence[float]): A sequence of historical prices
             labels (list[int]): A list of position labels (-1, 0, or 1)
 
         Returns:

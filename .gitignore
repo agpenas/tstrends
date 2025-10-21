@@ -170,3 +170,6 @@ coverage.xml
 *.jsonl.gz
 *.jsonl.gz.part
 *.jsonl.part
+
+# PyPI configuration
+.pypirc

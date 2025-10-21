@@ -29,16 +29,26 @@ class BaseLabelTuner(ABC):
             ValueError: If inputs are empty or have incompatible lengths.
         """
         # Verify time_series
-        if not isinstance(time_series, (list, np.ndarray)):
-            raise TypeError("time_series must be a list or numpy array.")
+        if not isinstance(
+            time_series, (list, np.ndarray)
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                "time_series must be a list or numpy array."
+            )  # pyright: ignore[reportUnreachable]
         if len(time_series) == 0:
             raise ValueError("time_series cannot be empty.")
-        if not all(isinstance(price, (int, float)) for price in time_series):
+        if not all(
+            isinstance(price, (int, float)) for price in time_series
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise TypeError("All elements in time_series must be numeric.")
 
         # Verify labels
-        if not isinstance(labels, (list, np.ndarray)):
-            raise TypeError("labels must be a list or numpy array.")
+        if not isinstance(
+            labels, (list, np.ndarray)
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                "labels must be a list or numpy array."
+            )  # pyright: ignore[reportUnreachable]
         if len(labels) == 0:
             raise ValueError("labels cannot be empty.")
         if not all(label in (-1, 0, 1) for label in labels):
@@ -89,7 +99,10 @@ class BaseSmoother(ABC):
             ValueError: If window_size < 2 or direction is invalid.
             TypeError: If direction is not a string or Direction enum.
         """
-        if not isinstance(window_size, int) or window_size < 2:
+        if (
+            not isinstance(window_size, int)
+            or window_size < 2  # pyright: ignore[reportUnnecessaryIsInstance]
+        ):
             raise ValueError("window_size must be a positive integer >= 2")
         self.window_size = window_size
 
@@ -101,10 +114,14 @@ class BaseSmoother(ABC):
                 raise ValueError(
                     f"direction must be one of {[d.value for d in Direction]}"
                 )
-        elif isinstance(direction, Direction):
+        elif isinstance(
+            direction, Direction
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
             self.direction = direction
         else:
-            raise TypeError("direction must be a string or Direction enum")
+            raise TypeError(
+                "direction must be a string or Direction enum"
+            )  # pyright: ignore[reportUnreachable]
 
     @abstractmethod
     def smooth(self, values: list[float]) -> np.ndarray:

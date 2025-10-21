@@ -60,6 +60,7 @@ class TestBaseLabeller:
             labeller._verify_time_series([1.0])
 
     def test_abstract_class_instantiation(self):
+        # BaseLabeller is abstract and cannot be instantiated
         with pytest.raises(TypeError):
             BaseLabeller()
 

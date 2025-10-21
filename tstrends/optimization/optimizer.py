@@ -1,4 +1,4 @@
-from typing import Optional, Type, Union
+from typing import Any, Optional, Type, Union
 
 from bayes_opt import BayesianOptimization, acquisition
 
@@ -19,7 +19,7 @@ class Optimizer:
     as the objective function to maximize.
 
     Attributes:
-        returns_estimator (Type[BaseReturnEstimator]): The returns estimator class to use.
+        returns_estimator (BaseReturnEstimator): The returns estimator instance to use.
         initial_points (int): Number of initial random points for optimization.
         nb_iter (int): Number of optimization iterations.
         random_state (int | None): Random seed for reproducibility.
@@ -27,7 +27,7 @@ class Optimizer:
 
     Example:
         >>> from returns_estimation import SimpleReturnEstimator
-        >>> optimizer = Optimizer(SimpleReturnEstimator, initial_points=5, nb_iter=100)
+        >>> optimizer = Optimizer(SimpleReturnEstimator(), initial_points=5, nb_iter=100)
         >>> result = optimizer.optimize(BinaryCTL, prices)
         >>> print(result['params'])  # {'omega': 0.005}
 
@@ -39,7 +39,7 @@ class Optimizer:
 
     def __init__(
         self,
-        returns_estimator: Type[BaseReturnEstimator],
+        returns_estimator: BaseReturnEstimator,
         initial_points: int = 10,
         nb_iter: int = 1_000,
         random_state: int | None = None,
@@ -85,27 +85,27 @@ class Optimizer:
 
     def optimize(
         self,
-        labeller_class: Type[BaseLabeller],
-        time_series_list: Union[list[float], list[list[float]]],
-        bounds: Optional[dict[str, tuple[float, float]]] = None,
-        acquisition_function: Optional[Type[acquisition.AcquisitionFunction]] = None,
-        verbose: Optional[int] = 0,
-    ) -> dict[str, Union[dict, float]]:
+        labeller_class: type[BaseLabeller],
+        time_series_list: list[float] | list[list[float]],
+        bounds: dict[str, tuple[float, float]] | None = None,
+        acquisition_function: acquisition.AcquisitionFunction | None = None,
+        verbose: int | None = 0,
+    ) -> dict[str, dict[str, float] | float]:
         """
         Optimize the trend labelling parameters.
 
         Args:
-            labeller_class (Type[BaseLabeller]): The trend labeller class to optimize.
-            time_series_list (Union[list[float], list[list[float]]]): Either a single time series list or a list of time series lists
+            labeller_class (type[BaseLabeller]): The trend labeller class to optimize.
+            time_series_list (list[float] | list[list[float]]): Either a single time series list or a list of time series lists
                 to optimize the trend labelling parameters on.
-            bounds (Optional[dict[str, tuple[float, float]]], optional): The bounds of the parameters to optimize.
+            bounds (dict[str, tuple[float, float]] | None, optional): The bounds of the parameters to optimize.
                 If not provided, the bounds will be the default bounds. Defaults to None.
-            acquisition_function (Optional[Type[acquisition.AcquisitionFunction]], optional): The acquisition function to use.
+            acquisition_function (acquisition.AcquisitionFunction | None, optional): The acquisition function to use.
                 If not provided, the default acquisition function UpperConfidenceBound(kappa=2) will be used.
-            verbose (Optional[int], optional): Verbosity level for optimization output. Defaults to 0.
+            verbose (int | None, optional): Verbosity level for optimization output. Defaults to 0.
 
         Returns:
-            dict[str, Union[dict, float]]: A dictionary containing:
+            dict[str, dict[str, float] | float]: A dictionary containing:
                 - 'params': Dictionary of optimal parameters
                 - 'target': The maximum target value achieved
         """
@@ -115,30 +115,32 @@ class Optimizer:
             )
         bounds = bounds or OptimizationBounds().get_bounds(labeller_class)
 
-        def objective_function(**params: dict[str, float]) -> float:
+        def objective_function(**params: float) -> float:
             processed_params = self._process_parameters(params)
             labeller = labeller_class(**processed_params)
 
             if isinstance(time_series_list[0], float):
                 # First element is a float (an not a list) -> Single time series case
                 return self.returns_estimator.estimate_return(
-                    time_series_list,
-                    labeller.get_labels(time_series_list),
+                    time_series_list,  # pyright: ignore[reportArgumentType]
+                    labeller.get_labels(
+                        time_series_list  # pyright: ignore[reportArgumentType]
+                    ),
                 )
 
             # Multiple time series case
             total_return = 0.0
             for series in time_series_list:
                 total_return += self.returns_estimator.estimate_return(
-                    series,
-                    labeller.get_labels(series),
+                    series,  # pyright: ignore[reportArgumentType]
+                    labeller.get_labels(series),  # pyright: ignore[reportArgumentType]
                 )
             return total_return
 
         self._optimizer = BayesianOptimization(
             f=objective_function,
             pbounds=bounds,
-            verbose=verbose,
+            verbose=verbose or 0,
             random_state=self.random_state,
             acquisition_function=acquisition_function,
         )
@@ -146,6 +148,12 @@ class Optimizer:
 
         # Return the optimization results directly
         return {
-            "params": self._process_parameters(self._optimizer.max["params"]),
-            "target": self._optimizer.max["target"],
+            "params": self._process_parameters(
+                self._optimizer.max[  # pyright: ignore[reportUnknownArgumentType, reportOptionalSubscript]
+                    "params"
+                ]
+            ),
+            "target": self._optimizer.max[  # pyright: ignore[reportOptionalSubscript]
+                "target"
+            ],
         }
