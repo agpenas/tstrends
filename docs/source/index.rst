@@ -35,7 +35,7 @@ Links
 Requirements
 ---------------------
 
-* Python 3.10+
+* Python 3.11+
 * NumPy
 * Pandas
 * bayesian-optimization

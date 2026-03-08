@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg" alt="Python Version"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg" alt="Python Version"></a>
   <img src="https://img.shields.io/codecov/c/github/agpenas/python-trend-labeller" alt="Codecov">
   <a href="https://pepy.tech/project/tstrends"><img src="https://static.pepy.tech/badge/tstrends" alt="Downloads"></a>
   <a href="https://github.com/agpenas/tstrends/commits/main"><img src="https://img.shields.io/github/last-commit/agpenas/python-trend-labeller" alt="Last Commit"></a>

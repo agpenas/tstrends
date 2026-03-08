@@ -33,7 +33,7 @@ documentation = "https://tstrends.readthedocs.io"
 
 
 [tool.poetry]
-version = "0.4.0"
+version = "0.5.0"
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.11",
