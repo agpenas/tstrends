@@ -11,5 +11,5 @@ Disallow: /_static/
 Disallow: /_images/
 
 # Sitemap
-Sitemap: https://tstrends.xyz/en/latest/sitemap.xml 
+Sitemap: https://tstrends.readthedocs.io/en/latest/sitemap.xml 
 
