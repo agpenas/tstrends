@@ -13,7 +13,7 @@ packages = [
     { include = "tstrends" }
 ]
 license = {text = "BSD-2-Clause"}
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = [
     "time series",
     "trend detection",
@@ -29,14 +29,13 @@ keywords = [
 
 [project.urls]
 repository = "https://github.com/agpenas/tstrends"
-documentation = "https://tstrends.xyz"
+documentation = "https://tstrends.readthedocs.io"
 
 
 [tool.poetry]
 version = "0.4.0"
 classifiers = [
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -51,22 +50,14 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-matplotlib = [
-    {version = "^3.10.0", python = ">=3.10,<3.11"},
-    {version = "^3.10.7", python = ">=3.14"}
-]
+python = "^3.11"
+matplotlib = "^3.10.7"
 bayesian-optimization = "^2.0.3"
 pandas = "^2.2.3"
-pillow = [
-    {version = "^11.1.0", python = ">=3.10,<3.11"},
-    {version = "^12.0.0", python = ">=3.14"}
-]
+pillow = "^12.1.1"
 numpy = "^2.2.3"
-scipy = [
-    {version = "^1.15.0", python = ">=3.10,<3.11"},
-    {version = "^1.16.0", python = ">=3.11"}
-]
+scipy = "^1.16.0"
+fonttools = "^4.61.1"
 
 [tool.poetry.group.dev]
 optional = true

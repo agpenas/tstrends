@@ -83,11 +83,7 @@ Contents
    :maxdepth: 2
    :caption: API Reference
 
-   tstrends.trend_labelling
-   tstrends.visualization
-   tstrends.optimization
-   tstrends.returns_estimation
-   tstrends.label_tuning
+   api
 
 .. toctree::
    :maxdepth: 2

@@ -5,6 +5,7 @@ ipykernel>=6.0.0
 jupyter_client>=7.0.0
 pandoc>=2.0.0
 ipython>=8.0.0
+ipython-pygments-lexers>=1.0.0
 matplotlib>=3.0.0
 numpy>=1.0.0
 pandas>=2.0.0

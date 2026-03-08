@@ -106,7 +106,7 @@ html_use_index = False  # Explicitly disable the index
 html_extra_path = ["_static/robots.txt"]
 
 # Sitemap configuration
-html_baseurl = "https://tstrends.xyz/en/latest/"
+html_baseurl = "https://tstrends.readthedocs.io/en/latest/"
 sitemap_filename = "sitemap.xml"
 sitemap_url_scheme = "{link}"
 sitemap_locales = [None]
