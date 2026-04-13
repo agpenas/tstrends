@@ -20,6 +20,22 @@ tstrends.label\_tuning.remaining\_value\_tuner module
    :show-inheritance:
    :undoc-members:
 
+tstrends.label\_tuning.filtering module
+---------------------------------------
+
+.. automodule:: tstrends.label_tuning.filtering
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tstrends.label\_tuning.shifting module
+--------------------------------------
+
+.. automodule:: tstrends.label_tuning.shifting
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 tstrends.label\_tuning.smoothing module
 ---------------------------------------
 

@@ -141,7 +141,7 @@ Optimize parameters for a single time series:
 Label Tuning Examples
 --------------------------------
 
-Label tuning transforms discrete trend labels into continuous values that express the potential of the trend at each point.
+Label tuning transforms discrete trend labels into continuous values that express the potential of the trend at each point. Optional **postprocessors** run in order after the magnitudes are computed: use :class:`~tstrends.label_tuning.filtering.ForwardLookingFilter` to downweight low forward-looking efficiency within each trend leg, :class:`~tstrends.label_tuning.shifting.Shifter` to align signals in time, and smoothers from :mod:`tstrends.label_tuning.smoothing` to pool neighboring values.
 
 Remaining Value Tuning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,14 +161,81 @@ The `RemainingValueTuner` transforms labels based on the difference between the 
    # Create a smoother for enhancing the tuned labels (optional)
    smoother = LinearWeightedAverage(window_size=5, direction="left")
 
-   # Tune the labels
-   tuner = RemainingValueTuner()
+   # Tune the labels (optional smoother via postprocessors)
+   tuner = RemainingValueTuner(postprocessors=[smoother])
    tuned_labels = tuner.tune(
        time_series=prices,
        labels=labels,
        enforce_monotonicity=True,
        normalize_over_interval=False,
-       smoother=smoother
+   )
+
+Forward-looking filter: tuning down early signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A **binary** segmentation can still yield rich float labels if you pass :class:`~tstrends.label_tuning.filtering.ForwardLookingFilter` (and optional smoothers) as ``postprocessors`` to :class:`~tstrends.label_tuning.remaining_value_tuner.RemainingValueTuner``. After remaining-value magnitudes are computed, the filter rescales them using a forward-looking **efficiency** measure: strong net move over the next few steps, relative to the path length, keeps the signal; weak or choppy forward paths damp it. Horizons can be set in bars or as a fraction of each non-neutral interval.
+
+Typical pattern: :class:`~tstrends.trend_labelling.OracleBinaryTrendLabeller` for labels, relative filter windows, then a left-looking moving average as the last postprocessor (postprocessors run in order).
+
+.. code-block:: python
+
+   from tstrends.trend_labelling import OracleBinaryTrendLabeller
+   from tstrends.label_tuning import RemainingValueTuner, ForwardLookingFilter
+   from tstrends.label_tuning.smoothing import SimpleMovingAverage
+
+   labels = OracleBinaryTrendLabeller(transaction_cost=0.006).get_labels(prices)
+
+   forward_filter = ForwardLookingFilter(
+       forward_window_rel=0.2,
+       smoothing_window_rel=0.1,
+   )
+   # Wider windows suit longer series; the label_tuner_example notebook uses 150 on synthetic data.
+   smoother = SimpleMovingAverage(window_size=25, direction="left")
+
+   tuner = RemainingValueTuner(
+       postprocessors=[forward_filter, smoother],
+   )
+   tuned_labels = tuner.tune(
+       time_series=prices,
+       labels=labels,
+       normalize_over_interval=True,
+   )
+
+If your downstream model accepts floats, this keeps **binary** labeller settings (often simpler to tune than multi-class labellers) while encoding “how much is left, weighted by near-term path quality” without extra discrete label states.
+
+Absolute windows, shifting, and pipeline order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use integer ``forward_window`` and ``smoothing_window`` instead of the ``*_rel`` arguments, optionally chain :class:`~tstrends.label_tuning.shifting.Shifter` so positive ``periods`` shift values later in time (earlier indices padded with zero), and mix in other smoothers—each step receives the output of the previous one:
+
+.. code-block:: python
+
+   from tstrends.label_tuning import (
+       RemainingValueTuner,
+       ForwardLookingFilter,
+       Shifter,
+   )
+   from tstrends.label_tuning.smoothing import LinearWeightedAverage
+
+   labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
+   labels = labeller.get_labels(prices)
+
+   forward_filter = ForwardLookingFilter(
+       forward_window=5,
+       smoothing_window=3,
+       quantile=0.95,
+   )
+   shifter = Shifter(periods=2)
+   smoother = LinearWeightedAverage(window_size=5, direction="left")
+
+   tuner = RemainingValueTuner(
+       postprocessors=[forward_filter, shifter, smoother],
+   )
+   tuned_labels = tuner.tune(
+       time_series=prices,
+       labels=labels,
+       enforce_monotonicity=True,
+       normalize_over_interval=False,
    )
 
 Smoothing Options
