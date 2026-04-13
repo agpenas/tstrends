@@ -1,8 +1,3 @@
-try:
-    from typing import override
-except ImportError:
-    from typing_extensions import override
-
 from typing import overload, Literal
 
 from .base_labeller import BaseLabeller
@@ -137,7 +132,6 @@ class TernaryCTL(BaseLabeller):
         self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
-    @override
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> list[int] | list[Labels]:

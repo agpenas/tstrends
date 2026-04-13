@@ -1,8 +1,3 @@
-try:
-    from typing import override
-except ImportError:
-    from typing_extensions import override
-
 from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Sequence
@@ -198,7 +193,6 @@ class ReturnsEstimatorWithFees(SimpleReturnEstimator):
             ) * fee
         return total_fees
 
-    @override
     def estimate_return(self, prices: Sequence[float], labels: list[int]) -> float:
         """
         Estimate the return based on price differences and labels, and include fees cost if it is not zero.

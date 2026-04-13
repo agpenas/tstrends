@@ -1,8 +1,3 @@
-try:
-    from typing import override
-except ImportError:
-    from typing_extensions import override
-
 from dataclasses import dataclass
 from typing import overload, Literal
 
@@ -174,7 +169,6 @@ class BinaryCTL(BaseLabeller):
         self, time_series_list: list[float], return_labels_as_int: Literal[False]
     ) -> list[Labels]: ...
 
-    @override
     def get_labels(
         self, time_series_list: list[float], return_labels_as_int: bool = True
     ) -> list[int] | list[Labels]:
