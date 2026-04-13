@@ -1,7 +1,7 @@
 {
     "BinaryCTL": {
         "params": {
-            "omega": 0.01
+            "omega": 0.009999009770092316
         },
         "target": 29.704324000000128
     },
@@ -20,9 +20,9 @@
     },
     "OracleTernaryTrendLabeller": {
         "params": {
-            "transaction_cost": 0.01,
-            "neutral_reward_factor": 0.0
+            "transaction_cost": 0.008661761457749353,
+            "neutral_reward_factor": 0.005808361216819946
         },
-        "target": 34.45894000000007
+        "target": 34.23403999999996
     }
 }
