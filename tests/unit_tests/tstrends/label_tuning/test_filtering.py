@@ -15,31 +15,30 @@ class TestForwardLookingFilter:
             forward_window=5,
             smoothing_window=3,
             quantile=0.9,
-            floor_epsilon=0.1,
         )
 
     def test_clean_uptrend_high_weights(
         self, filter_default: ForwardLookingFilter
     ) -> None:
-        """Monotonic move has high efficiency; core region stays near ceiling after floor."""
+        """Monotonic move has high efficiency; core region stays near ceiling."""
         prices = [100.0 + float(i) for i in range(30)]
         labels = [1] * len(prices)
         w = filter_default.get_coefficients(prices, labels)
-        assert w.min() >= filter_default.floor_epsilon - 1e-9
+        assert w.min() >= 0.0 - 1e-9
         assert w.max() <= 1.0 + 1e-9
-        h = filter_default.forward_window
+        h = 5  # matches ``filter_default`` forward_window
         # Avoid boundary rolls from undefined tail efficiencies and convolution edges
         core = slice(h + 2, -(h + 2))
         assert np.median(w[core]) > 0.85
 
-    def test_plateau_weights_near_floor(
+    def test_plateau_weights_near_zero(
         self, filter_default: ForwardLookingFilter
     ) -> None:
-        """Flat prices imply ~0 efficiency → weights near floor after pipeline."""
+        """Flat prices imply ~0 efficiency → weights near zero after normalization."""
         prices = [100.0] * 12
         labels = [1] * len(prices)
         w = filter_default.get_coefficients(prices, labels)
-        assert np.allclose(w, filter_default.floor_epsilon, atol=0.05)
+        assert np.allclose(w, 0.0, atol=0.05)
 
     def test_choppy_between_plateau_and_clean(
         self, filter_default: ForwardLookingFilter
@@ -63,13 +62,12 @@ class TestForwardLookingFilter:
         assert np.allclose(w, 1.0)
 
     def test_coefficients_bounded(self, filter_default: ForwardLookingFilter) -> None:
-        """All weights lie in [floor_epsilon, 1]."""
+        """All weights lie in [0, 1] after robust normalization."""
         np.random.seed(0)
         prices = (100.0 + np.cumsum(np.random.randn(30) * 0.5)).tolist()
         labels = [1] * len(prices)
         w = filter_default.get_coefficients(prices, labels)
-        floor = filter_default.floor_epsilon
-        assert (w >= floor - 1e-9).all() and (w <= 1.0 + 1e-9).all()
+        assert (w >= 0.0 - 1e-9).all() and (w <= 1.0 + 1e-9).all()
 
     def test_apply_matches_elementwise_product(
         self, filter_default: ForwardLookingFilter
@@ -82,22 +80,15 @@ class TestForwardLookingFilter:
         applied = filter_default.filter(values, prices, labels)
         assert np.allclose(applied, values * w)
 
-    def test_higher_floor_raises_minimum(
-        self,
-    ) -> None:
-        """Larger floor_epsilon increases typical low-efficiency weights."""
+    def test_forward_window_changes_coefficients(self) -> None:
+        """A wider forward horizon changes the efficiency profile vs a narrow one."""
         prices = [100.0 + 0.1 * (-1) ** i for i in range(20)]
         labels = [1] * len(prices)
-        low = ForwardLookingFilter(
-            forward_window=5, smoothing_window=3, floor_epsilon=0.1
-        )
-        high = ForwardLookingFilter(
-            forward_window=5, smoothing_window=3, floor_epsilon=0.4
-        )
-        assert (
-            high.get_coefficients(prices, labels).min()
-            > low.get_coefficients(prices, labels).min()
-        )
+        narrow = ForwardLookingFilter(forward_window=3, smoothing_window=3, quantile=0.9)
+        wide = ForwardLookingFilter(forward_window=10, smoothing_window=3, quantile=0.9)
+        w_narrow = narrow.get_coefficients(prices, labels)
+        w_wide = wide.get_coefficients(prices, labels)
+        assert not np.allclose(w_narrow, w_wide)
 
     def test_neutral_interval_passthrough(
         self, filter_default: ForwardLookingFilter
@@ -131,19 +122,35 @@ class TestForwardLookingFilter:
     @pytest.mark.parametrize(
         "kwargs",
         [
-            {"forward_window": 0},
-            {"smoothing_window": 0},
-            {"quantile": 0.0},
-            {"quantile": 1.5},
-            {"floor_epsilon": 1.0},
-            {"floor_epsilon": -0.1},
+            {"forward_window": 0, "smoothing_window": 3},
+            {"forward_window": 5, "smoothing_window": 0},
+            {"forward_window": 5, "smoothing_window": 3, "quantile": 0.0},
+            {"forward_window": 5, "smoothing_window": 3, "quantile": 1.5},
+            {
+                "forward_window": None,
+                "forward_window_rel": 0.0,
+                "smoothing_window": 3,
+            },
+            {
+                "forward_window": None,
+                "forward_window_rel": 1.0,
+                "smoothing_window": 3,
+            },
+            {
+                "forward_window": 5,
+                "smoothing_window": None,
+                "smoothing_window_rel": 0.0,
+            },
+            {
+                "forward_window": 5,
+                "smoothing_window": None,
+                "smoothing_window_rel": 1.0,
+            },
         ],
     )
     def test_invalid_constructor(self, kwargs: dict) -> None:
         with pytest.raises(ValueError):
-            ForwardLookingFilter(
-                **{**{"forward_window": 5, "smoothing_window": 3}, **kwargs}
-            )
+            ForwardLookingFilter(**kwargs)
 
     def test_apply_length_mismatch(self, filter_default: ForwardLookingFilter) -> None:
         with pytest.raises(ValueError, match="same length"):
