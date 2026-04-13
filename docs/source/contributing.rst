@@ -13,8 +13,8 @@ Clone the repository and install in development mode:
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/python-trend-labeller.git
-   cd python-trend-labeller
+   git clone https://github.com/agpenas/tstrends.git
+   cd tstrends
    pip install -e .
 
 For development, install the additional dependencies:

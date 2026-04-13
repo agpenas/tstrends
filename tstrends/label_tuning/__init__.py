@@ -8,7 +8,7 @@ the next trend change.
 
 from tstrends.label_tuning.base import BasePostprocessor
 from tstrends.label_tuning.filtering import ForwardLookingFilter
-from tstrends.label_tuning.remaining_value_tuner import RemainingValueTuner
+from tstrends.label_tuning import RemainingValueTuner
 from tstrends.label_tuning.shifting import Shifter
 from tstrends.label_tuning.smoothing import SimpleMovingAverage, LinearWeightedAverage
 from tstrends.label_tuning.smoothing_direction import Direction

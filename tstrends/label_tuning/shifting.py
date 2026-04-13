@@ -2,7 +2,7 @@
 Temporal shifting of tuned label sequences.
 
 Used as a post-processor in :class:`~tstrends.label_tuning.base.BasePostprocessor`
-pipelines (e.g. :meth:`~tstrends.label_tuning.remaining_value_tuner.RemainingValueTuner.tune`).
+pipelines (e.g. :meth:`~tstrends.label_tuning.RemainingValueTuner.tune`).
 """
 
 import numpy as np

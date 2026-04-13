@@ -9,9 +9,8 @@ Optimizer
 ----------------
 
 .. autoclass:: Optimizer
-   :members: optimize, get_best_params
+   :members: optimize, get_optimizer
    :special-members: __init__
-   :exclude-members: _verify_time_series
 
 OptimizationBounds
 --------------------------------
@@ -19,4 +18,3 @@ OptimizationBounds
 .. autoclass:: OptimizationBounds
    :members: get_bounds
    :special-members: __init__
-   :exclude-members: _verify_time_series

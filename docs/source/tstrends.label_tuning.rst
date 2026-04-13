@@ -3,7 +3,7 @@ Label Tuning
 
 The label tuning module enhances trend labels (UP/NEUTRAL/DOWN) by adding information about the potential trend magnitude, making them more useful for training prediction models.
 
-After raw magnitudes are computed, :class:`~tstrends.label_tuning.remaining_value_tuner.RemainingValueTuner` can run an ordered list of **postprocessors**—filters, shifters, and smoothers—that all implement :class:`tstrends.label_tuning.base.BasePostprocessor` (see the :mod:`tstrends.label_tuning.base` section in the package API).
+After raw magnitudes are computed, :class:`~tstrends.label_tuning.RemainingValueTuner` can run an ordered list of **postprocessors**—filters, shifters, and smoothers—that all implement :class:`tstrends.label_tuning.base.BasePostprocessor` (see the :mod:`tstrends.label_tuning.base` section in the package API).
 
 .. contents:: Contents
    :local:

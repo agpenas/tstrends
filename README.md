@@ -76,7 +76,7 @@ pip install tstrends
 ```python
 from tstrends.trend_labelling import BinaryCTL
 from tstrends.returns_estimation import SimpleReturnEstimator
-from tstrends.parameter_optimization import Optimizer
+from tstrends.optimization import Optimizer
 
 # Sample price data
 prices = [100.0, 102.0, 105.0, 103.0, 98.0, 97.0, 99.0, 102.0, 104.0]
@@ -91,7 +91,7 @@ returns = estimator.estimate_return(prices, binary_labels)
 
 # 3. Parameter Optimization
 optimizer = Optimizer(
-    returns_estimator=SimpleReturnEstimator,
+    returns_estimator=SimpleReturnEstimator(),
     initial_points=5,
     nb_iter=100
 )
@@ -180,13 +180,15 @@ By definition this is a bounded optimization problem, and some default bounds ar
 - `OracleTernaryTrendLabeller`: `transaction_cost` is bounded between 0 and 0.01, `neutral_reward_factor` is bounded between 0 and 0.1
 
 ```python
-from tstrends.parameter_optimization import Optimizer
+from tstrends.optimization import Optimizer
 from tstrends.returns_estimation import ReturnsEstimatorWithFees
 from tstrends.trend_labelling import OracleTernaryTrendLabeller
 
+prices = [100.0 + 0.2 * i for i in range(60)]
+
 # Create optimizer
 optimizer = Optimizer(
-    returns_estimator=ReturnsEstimatorWithFees,
+    returns_estimator=ReturnsEstimatorWithFees(),
     initial_points=10,
     nb_iter=1000,
     # random_state=42
@@ -246,6 +248,8 @@ Parameters of the `RemainingValueTuner` class constructor:
 from tstrends.label_tuning import RemainingValueTuner, Shifter, ForwardLookingFilter, LinearWeightedAverage
 
 from tstrends.trend_labelling import OracleTernaryTrendLabeller
+
+prices = [100.0 + 0.2 * i for i in range(60)]
 
 # Generate trend labels
 labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)

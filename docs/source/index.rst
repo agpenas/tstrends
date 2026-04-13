@@ -38,8 +38,11 @@ Requirements
 * Python 3.11+
 * NumPy
 * Pandas
+* SciPy
 * bayesian-optimization
 * matplotlib
+* Pillow
+* Fonttools
 
 Quick Start
 --------------------
@@ -52,19 +55,22 @@ Here's a simple example of how to use TStrends:
    from tstrends.returns_estimation import ReturnsEstimatorWithFees
    from tstrends.optimization import Optimizer
 
+   # Labellers expect a Python list of floats (not a NumPy array)
+   prices = [100.0, 101.5, 103.0, 101.0, 99.0, 100.5, 102.0]
+
    # Create a trend labeller
    labeller = BinaryCTL(omega=0.1)
 
    # Create a returns estimator
    estimator = ReturnsEstimatorWithFees()
 
-   # Create an optimizer
-   optimizer = Optimizer()
+   # Create an optimizer (requires a returns estimator instance)
+   optimizer = Optimizer(returns_estimator=estimator)
 
    # Use the components together
    labels = labeller.get_labels(prices)
-   returns = estimator.get_returns(prices, labels)
-   optimal_params = optimizer.optimize(labeller, prices)
+   returns = estimator.estimate_return(prices, labels)
+   optimal_params = optimizer.optimize(BinaryCTL, prices)
 
 For more detailed examples, see the :doc:`examples` page.
 
