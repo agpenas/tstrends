@@ -45,8 +45,8 @@ Label Tuning Example
 
 This notebook demonstrates how to transform discrete trend labels into continuous values expressing trend potential.
 
-* **Content**: Using the RemainingValueTuner to enhance trend labels
-* **Examples**: Configuring different tuning parameters and smoothing options
+* **Content**: Using the ``RemainingValueTuner`` to enhance trend labels and optional postprocessor pipelines
+* **Examples**: Tuning parameters, smoothing, forward-looking filters, and temporal shifts
 * **Advanced Topics**: Visualizing the effect of tuning on prediction models
 
 :doc:`View the Label Tuning Example <notebooks/label_tuner_example>`

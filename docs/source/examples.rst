@@ -24,9 +24,9 @@ The `omega` parameter in Binary CTL controls the sensitivity to trend changes. H
    from tstrends.trend_labelling import BinaryCTL
    import matplotlib.pyplot as plt
 
-   # Generate sample data
+   # Generate sample data (labellers require a Python list, not an ndarray)
    np.random.seed(42)
-   prices = np.random.randn(100).cumsum() + 100
+   prices = (np.random.randn(100).cumsum() + 100).tolist()
 
    # Test different omega values
    omega_values = [0.001, 0.005, 0.01, 0.015]
@@ -43,7 +43,11 @@ The `TernaryCTL` labeller uses two main parameters:
 
 .. code-block:: python
 
+   import numpy as np
    from tstrends.trend_labelling import TernaryCTL
+
+   np.random.seed(42)
+   prices = (np.random.randn(100).cumsum() + 100).tolist()
 
    # Different parameter combinations
    configs = [
@@ -68,11 +72,15 @@ Compare returns with and without transaction costs:
 
 .. code-block:: python
 
+   from tstrends.trend_labelling import BinaryCTL
    from tstrends.returns_estimation import (
        SimpleReturnEstimator,
        ReturnsEstimatorWithFees,
-       FeesConfig
+       FeesConfig,
    )
+
+   prices = [100.0 + 0.5 * i for i in range(50)]
+   labels = BinaryCTL(omega=0.01).get_labels(prices)
 
    # Simple returns
    simple_estimator = SimpleReturnEstimator()
@@ -95,6 +103,12 @@ Example with different fees for long and short positions:
 
 .. code-block:: python
 
+   from tstrends.trend_labelling import BinaryCTL
+   from tstrends.returns_estimation import ReturnsEstimatorWithFees, FeesConfig
+
+   prices = [100.0 + 0.5 * i for i in range(50)]
+   labels = BinaryCTL(omega=0.01).get_labels(prices)
+
    # Asymmetric fees configuration
    asymmetric_fees = FeesConfig(
        lp_transaction_fees=0.001,  # 0.1% for long positions
@@ -115,14 +129,19 @@ Optimize parameters for a single time series:
 
 .. code-block:: python
 
-   from tstrends.parameter_optimization import Optimizer
+   import numpy as np
+   from tstrends.optimization import Optimizer
+   from tstrends.returns_estimation import SimpleReturnEstimator
    from tstrends.trend_labelling import BinaryCTL
 
-   # Create optimizer
+   np.random.seed(42)
+   prices = (np.random.randn(100).cumsum() + 100).tolist()
+
+   # Create optimizer (pass a returns estimator instance, not the class)
    optimizer = Optimizer(
-       returns_estimator=SimpleReturnEstimator,
+       returns_estimator=SimpleReturnEstimator(),
        initial_points=5,
-       nb_iter=100
+       nb_iter=100,
    )
 
    # Define custom bounds
@@ -141,7 +160,7 @@ Optimize parameters for a single time series:
 Label Tuning Examples
 --------------------------------
 
-Label tuning transforms discrete trend labels into continuous values that express the potential of the trend at each point.
+Label tuning transforms discrete trend labels into continuous values that express the potential of the trend at each point. Optional **postprocessors** run in order after the magnitudes are computed: use :class:`~tstrends.label_tuning.filtering.ForwardLookingFilter` to downweight low forward-looking efficiency within each trend leg, :class:`~tstrends.label_tuning.shifting.Shifter` to align signals in time, and smoothers from :mod:`tstrends.label_tuning.smoothing` to pool neighboring values.
 
 Remaining Value Tuning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,9 +169,13 @@ The `RemainingValueTuner` transforms labels based on the difference between the 
 
 .. code-block:: python
 
+   import numpy as np
    from tstrends.trend_labelling import OracleTernaryTrendLabeller
    from tstrends.label_tuning import RemainingValueTuner
    from tstrends.label_tuning.smoothing import LinearWeightedAverage
+
+   np.random.seed(42)
+   prices = (np.random.randn(80).cumsum() + 100).tolist()
 
    # Generate trend labels
    labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
@@ -161,14 +184,88 @@ The `RemainingValueTuner` transforms labels based on the difference between the 
    # Create a smoother for enhancing the tuned labels (optional)
    smoother = LinearWeightedAverage(window_size=5, direction="left")
 
-   # Tune the labels
-   tuner = RemainingValueTuner()
+   # Tune the labels (optional smoother via postprocessors)
+   tuner = RemainingValueTuner(postprocessors=[smoother])
    tuned_labels = tuner.tune(
        time_series=prices,
        labels=labels,
        enforce_monotonicity=True,
        normalize_over_interval=False,
-       smoother=smoother
+   )
+
+Forward-looking filter: tuning down early signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A **binary** segmentation can still yield rich float labels if you pass :class:`~tstrends.label_tuning.filtering.ForwardLookingFilter` (and optional smoothers) as ``postprocessors`` to :class:`~tstrends.label_tuning.RemainingValueTuner`. After remaining-value magnitudes are computed, the filter rescales them using a forward-looking **efficiency** measure: strong net move over the next few steps, relative to the path length, keeps the signal; weak or choppy forward paths damp it. Horizons can be set in bars or as a fraction of each non-neutral interval.
+
+Typical pattern: :class:`~tstrends.trend_labelling.OracleBinaryTrendLabeller` for labels, relative filter windows, then a left-looking moving average as the last postprocessor (postprocessors run in order).
+
+.. code-block:: python
+
+   import numpy as np
+   from tstrends.trend_labelling import OracleBinaryTrendLabeller
+   from tstrends.label_tuning import RemainingValueTuner, ForwardLookingFilter
+   from tstrends.label_tuning.smoothing import SimpleMovingAverage
+
+   np.random.seed(42)
+   prices = (np.random.randn(120).cumsum() + 100).tolist()
+   labels = OracleBinaryTrendLabeller(transaction_cost=0.006).get_labels(prices)
+
+   forward_filter = ForwardLookingFilter(
+       forward_window_rel=0.2,
+       smoothing_window_rel=0.1,
+   )
+   # Wider windows suit longer series; the label_tuner_example notebook uses 150 on synthetic data.
+   smoother = SimpleMovingAverage(window_size=25, direction="left")
+
+   tuner = RemainingValueTuner(
+       postprocessors=[forward_filter, smoother],
+   )
+   tuned_labels = tuner.tune(
+       time_series=prices,
+       labels=labels,
+       normalize_over_interval=True,
+   )
+
+If your downstream model accepts floats, this keeps **binary** labeller settings (often simpler to tune than multi-class labellers) while encoding “how much is left, weighted by near-term path quality” without extra discrete label states.
+
+Absolute windows, shifting, and pipeline order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use integer ``forward_window`` and ``smoothing_window`` instead of the ``*_rel`` arguments, optionally chain :class:`~tstrends.label_tuning.shifting.Shifter` so positive ``periods`` shift values later in time (earlier indices padded with zero), and mix in other smoothers—each step receives the output of the previous one:
+
+.. code-block:: python
+
+   import numpy as np
+   from tstrends.label_tuning import (
+       RemainingValueTuner,
+       ForwardLookingFilter,
+       Shifter,
+   )
+   from tstrends.label_tuning.smoothing import LinearWeightedAverage
+   from tstrends.trend_labelling import OracleTernaryTrendLabeller
+
+   np.random.seed(42)
+   prices = (np.random.randn(80).cumsum() + 100).tolist()
+   labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
+   labels = labeller.get_labels(prices)
+
+   forward_filter = ForwardLookingFilter(
+       forward_window=5,
+       smoothing_window=3,
+       quantile=0.95,
+   )
+   shifter = Shifter(periods=2)
+   smoother = LinearWeightedAverage(window_size=5, direction="left")
+
+   tuner = RemainingValueTuner(
+       postprocessors=[forward_filter, shifter, smoother],
+   )
+   tuned_labels = tuner.tune(
+       time_series=prices,
+       labels=labels,
+       enforce_monotonicity=True,
+       normalize_over_interval=False,
    )
 
 Smoothing Options
@@ -179,6 +276,9 @@ Apply different smoothing options to the tuned labels:
 .. code-block:: python
 
    from tstrends.label_tuning.smoothing import SimpleMovingAverage, LinearWeightedAverage
+
+   # Example tuned series (e.g. from RemainingValueTuner); list of floats
+   tuned_labels = [0.1, 0.2, 0.15, -0.1, -0.05] * 10
 
    # Simple moving average (equal weights)
    simple_smoother = SimpleMovingAverage(window_size=5, direction="left")
@@ -198,12 +298,12 @@ Here's a complete example combining all components for a real-world scenario:
    import yfinance as yf
    from tstrends.trend_labelling import TernaryCTL
    from tstrends.returns_estimation import ReturnsEstimatorWithFees, FeesConfig
-   from tstrends.parameter_optimization import Optimizer
+   from tstrends.optimization import Optimizer
 
    # Download stock data
    stock = yf.Ticker("AAPL")
    df = stock.history(period="1y")
-   prices = df['Close'].values
+   prices = df["Close"].tolist()
 
    # Setup fees configuration
    fees_config = FeesConfig(

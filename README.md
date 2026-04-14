@@ -76,7 +76,7 @@ pip install tstrends
 ```python
 from tstrends.trend_labelling import BinaryCTL
 from tstrends.returns_estimation import SimpleReturnEstimator
-from tstrends.parameter_optimization import Optimizer
+from tstrends.optimization import Optimizer
 
 # Sample price data
 prices = [100.0, 102.0, 105.0, 103.0, 98.0, 97.0, 99.0, 102.0, 104.0]
@@ -91,7 +91,7 @@ returns = estimator.estimate_return(prices, binary_labels)
 
 # 3. Parameter Optimization
 optimizer = Optimizer(
-    returns_estimator=SimpleReturnEstimator,
+    returns_estimator=SimpleReturnEstimator(),
     initial_points=5,
     nb_iter=100
 )
@@ -180,13 +180,15 @@ By definition this is a bounded optimization problem, and some default bounds ar
 - `OracleTernaryTrendLabeller`: `transaction_cost` is bounded between 0 and 0.01, `neutral_reward_factor` is bounded between 0 and 0.1
 
 ```python
-from tstrends.parameter_optimization import Optimizer
+from tstrends.optimization import Optimizer
 from tstrends.returns_estimation import ReturnsEstimatorWithFees
 from tstrends.trend_labelling import OracleTernaryTrendLabeller
 
+prices = [100.0 + 0.2 * i for i in range(60)]
+
 # Create optimizer
 optimizer = Optimizer(
-    returns_estimator=ReturnsEstimatorWithFees,
+    returns_estimator=ReturnsEstimatorWithFees(),
     initial_points=10,
     nb_iter=1000,
     # random_state=42
@@ -236,30 +238,31 @@ This approach is particularly valuable in financial applications where:
 Key parameters of the `tune` method:
 - `enforce_monotonicity`: If True, labels in each interval will not reverse on uncaptured countertrends
 - `normalize_over_interval`: If True, the remaining value change will be normalized over each interval
-- `shift_periods`: Number of periods to shift the labels forward (if positive) or backward (if negative)
-- `smoother`: Optional smoother object to smooth the resulting tuned labels (see [Smoothing Options](#2-smoothing-options) below)
+Parameters of the `RemainingValueTuner` class constructor:
+- `postprocessors`: Optional list of steps applied in order after computing remaining values (e.g. `Shifter`, `ForwardLookingFilter`, smoothers from [Smoothing Options](#2-smoothing-options) below). Order matters: list `[Shifter(2), smoother]` matches shifting then smoothing.
+
+> **Note** 💡  
+> Postprocessors can be applied to turn binary labels into effective float value labels and, after an extra thresholding step, into labels with as many states as needed.
 
 ```python
-from tstrends.label_tuning import RemainingValueTuner
-from tstrends.label_tuning.smoothing import LinearWeightedAverage
+from tstrends.label_tuning import RemainingValueTuner, Shifter, ForwardLookingFilter, LinearWeightedAverage
+
 from tstrends.trend_labelling import OracleTernaryTrendLabeller
+
+prices = [100.0 + 0.2 * i for i in range(60)]
 
 # Generate trend labels
 labeller = OracleTernaryTrendLabeller(transaction_cost=0.006, neutral_reward_factor=0.03)
 labels = labeller.get_labels(prices)
 
-# Create a smoother for enhancing the tuned labels (optional)
+# Create a smoother, a shifter and a forward looking filter for enhancing the tuned labels (optional)
 smoother = LinearWeightedAverage(window_size=5, direction="left")
+shifter = Shifter(periods=20)
+forward_filter = ForwardLookingFilter(forward_window=5, smoothing_window=3, quantile=0.95)
 
 # Tune the labels
-tuner = RemainingValueTuner()
-tuned_labels = tuner.tune(
-    time_series=prices,
-    labels=labels,
-    enforce_monotonicity=True,
-    normalize_over_interval=False,
-    smoother=smoother
-)
+tuner = RemainingValueTuner(postprocessors=[forward_filter, shifter, smoother])
+tuned_labels = tuner.tune(prices, labels, enforce_monotonicity=True, normalize_over_interval=False)
 ```
 
 #### 2. Smoothing Options
@@ -272,6 +275,30 @@ The label tuning module provides smoothing classes to enhance the tuned label ou
 Both smoothers support "left" direction (using only past data) or "centered" direction (using both past and future data).
 
 See the [label tuner example notebook](https://github.com/agpenas/tstrends/blob/main/notebooks/label_tuner_example.ipynb) for a detailed example of label tuning.
+
+#### 3. Shifting Options
+
+The label tuning module provides shifting classes to shift the tuned label output:
+
+- `Shifter`: Shift the tuned labels forward or backward.
+
+Parameters of the `Shifter` class constructor:
+- `periods`: Number of steps to shift.
+
+#### 4. Forward Looking Filter
+
+The label tuning module provides a forward looking filter to filter the tuned label output:
+- `ForwardLookingFilter`: Filter the tuned labels based on forward looking efficiency.
+Parameters of the `ForwardLookingFilter` class constructor:
+- `forward_window`: Absolute number of steps to look forward.
+- `forward_window_rel`: Relative number of steps to look forward.
+- `smoothing_window`: Absolute number of steps to smooth the forward looking efficiency.
+- `smoothing_window_rel`: Relative number of steps to smooth the forward looking efficiency.
+- `quantile`: Quantile to use for the forward looking efficiency.
+
+
+See the [label tuner example notebook](https://github.com/agpenas/tstrends/blob/main/notebooks/label_tuner_example.ipynb) for a detailed example of label tuning.
+
 
 <a id="roadmap"></a>
 ## 🚧 Roadmap

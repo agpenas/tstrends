@@ -8,8 +8,11 @@ TStrends requires Python 3.11 or later. Tested on Python 3.11–3.14. The packag
 
 * numpy
 * pandas
+* scipy
 * bayesian-optimization
 * matplotlib
+* pillow
+* fonttools
 
 Installing TStrends
 ---------------------------
@@ -29,7 +32,7 @@ For development installation:
 
    .. code-block:: bash
 
-      git clone https://github.com/yourusername/tstrends.git
+      git clone https://github.com/agpenas/tstrends.git
       cd tstrends
 
 2. Install development dependencies:

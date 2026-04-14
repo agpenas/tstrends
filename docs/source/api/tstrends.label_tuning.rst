@@ -15,7 +15,23 @@ tstrends.label\_tuning.base module
 tstrends.label\_tuning.remaining\_value\_tuner module
 -----------------------------------------------------
 
-.. automodule:: tstrends.label_tuning.remaining_value_tuner
+.. automodule:: tstrends.label_tuning
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tstrends.label\_tuning.filtering module
+---------------------------------------
+
+.. automodule:: tstrends.label_tuning.filtering
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tstrends.label\_tuning.shifting module
+--------------------------------------
+
+.. automodule:: tstrends.label_tuning.shifting
    :members:
    :show-inheritance:
    :undoc-members:

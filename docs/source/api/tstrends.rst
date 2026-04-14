@@ -13,10 +13,7 @@ Subpackages
    tstrends.trend_labelling
    tstrends.visualization
 
-Module contents
----------------
+Public API
+----------
 
-.. automodule:: tstrends
-   :members:
-   :show-inheritance:
-   :undoc-members:
+The package root module ``tstrends`` does not re-export symbols; import from the subpackages listed above (for example ``from tstrends.trend_labelling import BinaryCTL``).

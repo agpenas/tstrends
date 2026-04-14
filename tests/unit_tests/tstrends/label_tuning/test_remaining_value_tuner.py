@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 
-from tstrends.label_tuning.remaining_value_tuner import RemainingValueTuner
+from tstrends.label_tuning import RemainingValueTuner
+from tstrends.label_tuning.shifting import Shifter
 from tstrends.label_tuning.smoothing import SimpleMovingAverage
 
 
@@ -139,10 +140,11 @@ class TestRemainingValueTuner:
             ),
         ],
     )
-    def test_shift_periods(self, tuner, test_series, shift, expected, request):
+    def test_shift_periods(self, test_series, shift, expected, request):
         """Test tuning with period shifting."""
         series = request.getfixturevalue(test_series)
-        result = tuner.tune(series["prices"], series["labels"], shift_periods=shift)
+        tuner = RemainingValueTuner(postprocessors=[Shifter(shift)])
+        result = tuner.tune(series["prices"], series["labels"])
         assert np.allclose(result, expected)
 
     @pytest.mark.parametrize(
@@ -160,11 +162,12 @@ class TestRemainingValueTuner:
             ),
         ],
     )
-    def test_with_smoother(self, tuner, test_series, window_size, expected, request):
+    def test_with_smoother(self, test_series, window_size, expected, request):
         """Test tuning with smoothing applied."""
         series = request.getfixturevalue(test_series)
         smoother = SimpleMovingAverage(window_size=window_size)
-        result = tuner.tune(series["prices"], series["labels"], smoother=smoother)
+        tuner = RemainingValueTuner(postprocessors=[smoother])
+        result = tuner.tune(series["prices"], series["labels"])
         # Use atol to handle small floating-point differences
         assert np.allclose(result, expected, rtol=1e-2, atol=1e-10)
 

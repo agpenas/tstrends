@@ -9,14 +9,12 @@ Estimator Classes
 --------------------------------
 
 .. autoclass:: SimpleReturnEstimator
-   :members:
+   :members: estimate_return
    :special-members: __init__
-   :exclude-members: _verify_time_series
 
 .. autoclass:: ReturnsEstimatorWithFees
-   :members: get_returns, estimate_return
+   :members: estimate_return
    :special-members: __init__
-   :exclude-members: _verify_time_series
 
 Configuration
 ---------------------

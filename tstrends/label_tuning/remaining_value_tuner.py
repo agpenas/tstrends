@@ -5,16 +5,11 @@ This module provides a tuner that enhances trend labels with information about
 the remaining value change until the end of a continuous trend interval.
 """
 
-try:
-    from typing import override
-except ImportError:
-    from typing_extensions import override
-
 from itertools import pairwise
 from typing import Any
 import numpy as np
 
-from tstrends.label_tuning.base import BaseLabelTuner, BaseSmoother
+from tstrends.label_tuning.base import BaseLabelTuner, BasePostprocessor
 
 
 class RemainingValueTuner(BaseLabelTuner):
@@ -25,24 +20,31 @@ class RemainingValueTuner(BaseLabelTuner):
     from the current position to the end of the current trend interval.
 
     Attributes:
-        normalize (bool): Whether to normalize the remaining value change to a [-1, 1] range.
+        postprocessors (Optional[list[BasePostprocessor]], optional): Steps applied
+            in order after computing remaining values (e.g. :class:`~tstrends.label_tuning.shifting.Shifter`,
+            :class:`~tstrends.label_tuning.filtering.ForwardLookingFilter`, smoothers).
+            Pass ``time_series`` and ``labels`` into each step for filters; smoothers
+            and shifters ignore context as documented on each class.
     """
 
-    def __init__(self):
+    def __init__(self, postprocessors: list[BasePostprocessor] | None = None):
         """
         Initialize the RemainingValueTuner.
 
         """
+        self.postprocessors = postprocessors or []
+        for postprocessor in self.postprocessors:
+            if not isinstance(postprocessor, BasePostprocessor):
+                raise TypeError(
+                    f"postprocessors must be a list of BasePostprocessor, got {type(postprocessor)}"
+                )
 
-    @override
     def tune(
         self,
         time_series: list[float],
         labels: list[int],
         enforce_monotonicity: bool = False,
         normalize_over_interval: bool = False,
-        shift_periods: int = 0,
-        smoother: BaseSmoother | None = None,
         **kwargs: Any,
     ) -> list[float]:
         """
@@ -57,13 +59,8 @@ class RemainingValueTuner(BaseLabelTuner):
             labels (list[int]): The original trend labels (-1, 1) or (-1, 0, 1).
             enforce_monotonicity (bool, optional): If True, the labels in each interval will not reverse on uncaptured countertrends.
             normalize_over_interval (bool, optional): If True, the remaining value change will be normalized over the interval.
-            shift_periods (int, optional): The number of periods to shift the labels forward (if positive) or backward (if negative).
-            smoother (Optional[BaseSmoother], optional): The smoother to use to smooth the remaining value change.
         Returns:
-            list[float]: Enhanced labels with information about remaining value change:
-                       - For uptrends (1): positive values indicating remaining uplift
-                       - For downtrends (-1): negative values indicating remaining downside
-                       - For neutral trends (0): values close to zero
+            list[float]: Tuned up labels with the list of postprocessors applied.
         """
         self._verify_inputs(time_series, labels)
 
@@ -101,20 +98,9 @@ class RemainingValueTuner(BaseLabelTuner):
 
             result[interval_slice] = interval_values
 
-        # Shift the result if needed
-        if shift_periods:
-
-            shifted = np.zeros_like(result)
-
-            if shift_periods > 0:
-                shifted[shift_periods:] = result[:-shift_periods]
-            else:
-                shifted[:shift_periods] = result[-shift_periods:]
-
-            result = shifted
-
-        if smoother:
-            result = smoother.smooth(result.tolist())
+        if self.postprocessors:
+            for step in self.postprocessors:
+                result = step.process(result, time_series, labels)
 
         return result.tolist()
 
