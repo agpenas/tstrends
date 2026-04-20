@@ -24,7 +24,7 @@ The `omega` parameter in Binary CTL controls the sensitivity to trend changes. H
    from tstrends.trend_labelling import BinaryCTL
    import matplotlib.pyplot as plt
 
-   # Generate sample data (labellers require a Python list, not an ndarray)
+   # Generate sample data (labellers require a Python list of ints/floats, not an ndarray)
    np.random.seed(42)
    prices = (np.random.randn(100).cumsum() + 100).tolist()
 

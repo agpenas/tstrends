@@ -33,7 +33,7 @@ documentation = "https://tstrends.readthedocs.io"
 
 
 [tool.poetry]
-version = "0.6.0"
+version = "0.6.1"
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.11",
@@ -58,6 +58,7 @@ pillow = "^12.1.1"
 numpy = "^2.2.3"
 scipy = "^1.16.0"
 fonttools = "^4.61.1"
+typing-extensions = "^4.12.2"
 
 [tool.poetry.group.dev]
 optional = true

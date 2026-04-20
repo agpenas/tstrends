@@ -55,7 +55,7 @@ Here's a simple example of how to use TStrends:
    from tstrends.returns_estimation import ReturnsEstimatorWithFees
    from tstrends.optimization import Optimizer
 
-   # Labellers expect a Python list of floats (not a NumPy array)
+   # Labellers expect a Python list of numeric prices—ints or floats (not a NumPy array)
    prices = [100.0, 101.5, 103.0, 101.0, 99.0, 100.5, 102.0]
 
    # Create a trend labeller

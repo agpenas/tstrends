@@ -15,7 +15,7 @@ tstrends.label\_tuning.base module
 tstrends.label\_tuning.remaining\_value\_tuner module
 -----------------------------------------------------
 
-.. automodule:: tstrends.label_tuning
+.. automodule:: tstrends.label_tuning.remaining_value_tuner
    :members:
    :show-inheritance:
    :undoc-members:
