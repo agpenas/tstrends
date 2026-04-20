@@ -35,7 +35,7 @@ For development installation:
       git clone https://github.com/agpenas/tstrends.git
       cd tstrends
 
-2. Install development dependencies:
+2. Install development dependencies (includes the Sphinx stack needed to build the HTML docs, e.g. nbsphinx and the sitemap extension):
 
    .. code-block:: bash
 

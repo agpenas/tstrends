@@ -5,3 +5,4 @@ numpy>=2.2.3
 scipy>=1.16.0 
 pillow>=12.1.1
 fonttools>=4.61.1
+typing-extensions>=4.12.2

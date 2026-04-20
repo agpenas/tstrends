@@ -16,7 +16,7 @@ This notebook demonstrates all the available trend labellers and shows their beh
 * **Visualizations**: Multiple plots showing labelling results with different parameters
 * **Advanced Topics**: Parameter sensitivity analysis
 
-:doc:`View the Trend Labelling Catalogue <notebooks/labellers_catalogue>`
+`View the Trend Labelling Catalogue on GitHub <https://github.com/agpenas/tstrends/blob/main/notebooks/labellers_catalogue.ipynb>`__
 
 How to Use Simple Labellers
 ----------------------------
@@ -27,7 +27,7 @@ Learn how to use the basic trend labelling functionality in TStrends.
 * **Examples**: Finding good parameters for labellers
 * **Advanced Topics**: Return estimation with different fee structures
 
-:doc:`View the Simple Labeller Tutorial <notebooks/simple_labeller_howto>`
+`View the Simple Labeller Tutorial on GitHub <https://github.com/agpenas/tstrends/blob/main/notebooks/simple_labeller_howto.ipynb>`__
 
 Parameter Optimization Example
 ------------------------------
@@ -38,7 +38,7 @@ This notebook shows how to optimize trend labeller parameters using Bayesian opt
 * **Examples**: Applying optimization to different time series
 * **Advanced Topics**: Handling different time series characteristics
 
-:doc:`View the Parameter Optimization Example <notebooks/optimization_example>`
+`View the Parameter Optimization Example on GitHub <https://github.com/agpenas/tstrends/blob/main/notebooks/optimization_example.ipynb>`__
 
 Label Tuning Example
 ------------------------------
@@ -49,4 +49,4 @@ This notebook demonstrates how to transform discrete trend labels into continuou
 * **Examples**: Tuning parameters, smoothing, forward-looking filters, and temporal shifts
 * **Advanced Topics**: Visualizing the effect of tuning on prediction models
 
-:doc:`View the Label Tuning Example <notebooks/label_tuner_example>`
+`View the Label Tuning Example on GitHub <https://github.com/agpenas/tstrends/blob/main/notebooks/label_tuner_example.ipynb>`__
